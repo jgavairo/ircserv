@@ -5,10 +5,10 @@ CXXFLAGS = -Wall -Wextra -Werror -MMD -MP -std=c++98 -I inc
 
 SRCDIR = src
 INCDIR = inc
-OBJDIR = objects
-DEPDIR = pmergeMe
+OBJDIR = tmpObj
+DEPDIR = tmpDep
 
-SRCS = 	
+SRCS = main.cpp
 OBJS = $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.cpp=.o)))
 DEPS = $(addprefix $(DEPDIR)/, $(notdir $(SRCS:.cpp=.d)))
 
