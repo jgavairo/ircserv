@@ -8,7 +8,7 @@ INCDIR = inc
 OBJDIR = tmpObj
 DEPDIR = tmpDep
 
-SRCS = main.cpp
+SRCS = main.cpp Client.cpp Server.cpp Channel.cpp
 OBJS = $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.cpp=.o)))
 DEPS = $(addprefix $(DEPDIR)/, $(notdir $(SRCS:.cpp=.d)))
 
