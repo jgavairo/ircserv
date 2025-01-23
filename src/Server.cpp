@@ -46,7 +46,7 @@ void Server::run()
     _fds.push_back(server_poll_fd);
     while (true)
     {
-        int poll_count = poll(_fds.data(), _fds.size(), -1);
+        int poll_count = poll(_fds.data(), _fds.size(), 100);
         if (poll_count < 0)
             std::cerr << "Error poll() client connexion failed." << std::endl;
         
