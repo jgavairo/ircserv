@@ -29,9 +29,8 @@ clean:
 	rm -f $(OBJS) $(DEPS)
 	rm -d $(OBJDIR) $(DEPDIR)
 
-fclean:
+fclean: clean
 	rm -f $(NAME)
-	make clean
 
 re: fclean all
 
