@@ -8,9 +8,12 @@ INCDIR = inc
 OBJDIR = tmpObj
 DEPDIR = tmpDep
 
-SRCS = main.cpp Client.cpp Server.cpp Channel.cpp
-OBJS = $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.cpp=.o)))
-DEPS = $(addprefix $(DEPDIR)/, $(notdir $(SRCS:.cpp=.d)))
+SRCS = 	main.cpp Client.cpp Server.cpp Channel.cpp Parser.cpp \
+		commands/Nick.cpp \
+		commands/CommandsList.cpp \
+		commands/ACommand.cpp
+OBJS = $(addprefix $(OBJDIR)/, $(SRCS:.cpp=.o))
+DEPS = $(addprefix $(DEPDIR)/, $(SRCS:.cpp=.d))
 
 all: $(NAME)
 
@@ -20,14 +23,15 @@ $(NAME): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJS)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR) $(DEPDIR)
+	mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@ -MMD -MF $(DEPDIR)/$*.d
 
 $(OBJDIR) $(DEPDIR):
-	mkdir -p $@
+	mkdir -p $(OBJDIR)/commands $(DEPDIR)/commands
 
 clean:
 	rm -f $(OBJS) $(DEPS)
-	rm -d $(OBJDIR) $(DEPDIR)
+	rm -rf $(OBJDIR) $(DEPDIR)
 
 fclean: clean
 	rm -f $(NAME)

@@ -2,9 +2,9 @@
 
 class Channel
 {
-private:
-    
-public:
-    Channel();
-    ~Channel();
+    private:
+        
+    public:
+        Channel();
+        ~Channel();
 };
