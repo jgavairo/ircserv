@@ -2,8 +2,7 @@
 
 CommandsList::CommandsList()
 {
-    ACommand* command = new Nick();
-    _list[command->_name] = command;
+    _list["NICK"] = new Nick();
 
     //ADD ALL COMMANDES
 }

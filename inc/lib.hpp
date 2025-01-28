@@ -2,6 +2,7 @@
 
 #include <sys/socket.h>
 #include <iostream>
+#include <sstream>
 #include <cerrno>
 #include <cstring>
 #include <cstdlib>

@@ -1,9 +1,5 @@
 #include "../../inc/commands/ACommand.hpp"
 
-ACommand::ACommand() {
-    // Constructeur
-}
+ACommand::ACommand() {} 
 
-ACommand::~ACommand() {
-    // Destructeur
-}
+ACommand::~ACommand() {}

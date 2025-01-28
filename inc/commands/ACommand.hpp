@@ -1,15 +1,22 @@
 #pragma once
 
 #include "lib.hpp"
+#include "../Client.hpp"
 
 class ACommand
 {
 protected:
-    /* data */
-public:
-    std::string _name;
-    void use(Client& client, std::string nickname);
     ACommand();
-    ~ACommand();
+public:
+    virtual ~ACommand();
+    virtual void execute(Client* client, std::string arguments) = 0;
 };
 
+class Nick : public ACommand
+{
+    public:
+        Nick();
+        ~Nick();
+        std::string _name;
+        void execute(Client* client, std::string arguments);
+};

@@ -33,6 +33,7 @@ class Server
         void initialisation(int argc, char** argv);
         int addNewClient();
         void receiveNewSignal(size_t& i);
+        void handleCommand(Client* client, std::string commandName, std::string arguments);
 
 
     public:

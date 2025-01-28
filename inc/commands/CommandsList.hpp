@@ -2,7 +2,6 @@
 
 #include "lib.hpp"
 #include "ACommand.hpp"
-#include "Nick.hpp"
 
 class CommandsList
 {

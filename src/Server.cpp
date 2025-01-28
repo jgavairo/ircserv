@@ -88,13 +88,24 @@ void Server::receiveNewSignal(size_t& i)
     {
         //OK
         buffer[bytes_received] = '\0';
-        if (strcmp(buffer, "NICK"))
-        {
-            if (_commandsList._list.find("NICK") != _commandsList._list.end())
-                _commandsList._list["NICK"]->use(*_clients[_fds[i].fd], "NEW NICKNAME");
-        }
-        std::cout << "message received! (from client " << _fds[i].fd << ") : " << buffer << std::endl;  
+        std::string input(buffer), commandName, arguments;
+
+
+        std::istringstream iss(input);
+        iss >> commandName;
+        getline(iss, arguments);
+
+        if (!arguments.empty() && arguments[0] == ' ')
+            arguments.erase(0, 1);
+        
+        handleCommand(_clients[_fds[i].fd], commandName, arguments);
     }
+}
+
+void Server::handleCommand(Client* client, std::string commandName, std::string arguments)
+{
+    if (_commandsList._list.find(commandName) != _commandsList._list.end())
+        _commandsList._list[commandName]->execute(client, arguments);
 }
 
 void Server::run()

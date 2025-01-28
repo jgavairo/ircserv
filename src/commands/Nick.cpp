@@ -1,11 +1,16 @@
-#include "../../inc/commands/Nick.hpp"
+#include "../../inc/commands/ACommand.hpp"
 
-Nick::Nick() : _name("NICK") {}
+Nick::Nick() {}
 
 Nick::~Nick() {}
 
-void Nick::use(Client& client, std::string nickname)
+void Nick::execute(Client* client, std::string arguments)
 {
-    client.setNickname(nickname);
-    std::cout << "your nickname is now: " << nickname << std::endl;
+    std::istringstream iss(arguments);
+    std::string new_nickname;
+
+    iss >> new_nickname;
+
+    client->setNickname(new_nickname);
+    std::cout << "Command 'NICK' has been executed on client " << client->getFd() << ". her nickname is now " << client->getNickname() << std::endl;
 }
