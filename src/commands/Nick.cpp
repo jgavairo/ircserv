@@ -12,5 +12,5 @@ void Nick::execute(Client* client, std::string arguments)
     iss >> new_nickname;
 
     client->setNickname(new_nickname);
-    std::cout << "Command 'NICK' has been executed on client " << client->getFd() << ". her nickname is now " << client->getNickname() << std::endl;
+    std::cout << "----Command 'NICK' has been executed on client " << client->getFd() << ". her nickname is now " << client->getNickname() << "----" << std::endl;
 }

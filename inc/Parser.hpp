@@ -9,4 +9,5 @@ class Parser
         Parser();
         ~Parser();
         void parametersChecker(int argc, char** argv, int& _port);
+        std::vector<std::string> splitByCRLF(const std::string& received);
 };

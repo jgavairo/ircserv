@@ -1,7 +1,7 @@
 #include "Client.hpp"
 
 Client::Client(int fd) 
-    : _fd(fd), _authenticated(false) {}
+    : _fd(fd), _state(NOT_REGISTERED) {}
 
 Client::~Client() {}
 
@@ -9,15 +9,26 @@ Client::~Client() {}
 int Client::getFd() const { return _fd; }
 const std::string& Client::getHostname() const { return _hostname; }
 const std::string& Client::getRealname() const { return _realname; }
+const std::string& Client::getUsername() const { return _username; }
 const std::string& Client::getNickname() const { return _nickname; }
+ClientState Client::getState() const { return _state; }
 
 //setters
 void Client::setNickname(const std::string& nickname) { _nickname = nickname; }
 void Client::setUsername(const std::string& username) { _username = username; }
 void Client::setRealname(const std::string& realname) { _realname = realname; }
+void Client::setState(ClientState state) { _state = state; }
 
-//function for approve auth
-void Client::authentificate() { _authenticated = true; }
+void Client::reply(const std::string& reply)
+{
+    std::string serverName = SERVER_NAME;
+    this->write(":" + serverName + " " + reply);
+}
 
-//getter state auth
-bool Client::isAuthentificated() const { return _authenticated; }
+void Client::write(const std::string& message)
+{
+    std::string finalMessage = message + CRLF;
+    std::cout << _nickname << message << std::endl;
+    if (send(_fd, finalMessage.c_str(), finalMessage.length(), 0) < 0)
+        throw (std::runtime_error("writing message from client failed"));
+}

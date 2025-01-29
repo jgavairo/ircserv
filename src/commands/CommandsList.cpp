@@ -3,6 +3,7 @@
 CommandsList::CommandsList()
 {
     _list["NICK"] = new Nick();
+    _list["USER"] = new User();
 
     //ADD ALL COMMANDES
 }

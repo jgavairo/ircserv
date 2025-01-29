@@ -50,6 +50,9 @@ int Server::addNewClient()
     }
     std::cout << "New client connected: " << client_socket << std::endl;
 
+    std::string initialResponse = ":irc.example.com NOTICE * :Welcome to My IRC Server!\r\n";
+    send(client_socket, initialResponse.c_str(), initialResponse.size(), 0);
+
     pollfd client_poll_fd = {client_socket, POLLIN, 0};
     _fds.push_back(client_poll_fd);
 
@@ -88,24 +91,27 @@ void Server::receiveNewSignal(size_t& i)
     {
         //OK
         buffer[bytes_received] = '\0';
-        std::string input(buffer), commandName, arguments;
+        std::string input(buffer);
 
-
-        std::istringstream iss(input);
-        iss >> commandName;
-        getline(iss, arguments);
-
-        if (!arguments.empty() && arguments[0] == ' ')
-            arguments.erase(0, 1);
-        
-        handleCommand(_clients[_fds[i].fd], commandName, arguments);
+        std::cout << "New message received from fd[" << _fds[i].fd << "] : {" << input << "}" << std::endl;
+        std::vector<std::string> commandLines = _parser.splitByCRLF(input);
+        handleCommands(_clients[_fds[i].fd], commandLines);
     }
 }
 
-void Server::handleCommand(Client* client, std::string commandName, std::string arguments)
+void Server::handleCommands(Client* client, std::vector<std::string> commandLines)
 {
-    if (_commandsList._list.find(commandName) != _commandsList._list.end())
-        _commandsList._list[commandName]->execute(client, arguments);
+    for (size_t i = 0; i < commandLines.size(); i++)
+    {
+        std::string commandName, arguments;
+        std::istringstream iss(commandLines[i]);
+        iss >> commandName;
+        if (_commandsList._list.find(commandName) != _commandsList._list.end())
+        {
+            getline(iss, arguments);
+            _commandsList._list[commandName]->execute(client, arguments);
+        }
+    }
 }
 
 void Server::run()

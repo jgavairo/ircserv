@@ -11,8 +11,11 @@ class Channel
         std::string _password;
         std::string _topic;
         std::set<Client*> _whitelist;
-        std::map<Client*, bool> _clients;
     public:
-        Channel();
+        std::vector<Client*> _clients;
+        Channel(const std::string& name);
         ~Channel();
+        void addClient(Client* client);
+        void removeClient(Client* client);
+        void displayClients() const;
 };

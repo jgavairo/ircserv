@@ -50,6 +50,8 @@
         "utility": "cpp",
         "ranges": "cpp",
         "span": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "sstream": "cpp",
+        "cerrno": "cpp"
     }
 }
