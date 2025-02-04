@@ -5,40 +5,40 @@
 #include "Parser.hpp"
 #include "commands/CommandsList.hpp"
 
-class Client;
-class Channel;
-class Parser;
-class CommandsList;
-
 class Server
 {
     private:
+        static Server* _instance;
         int _fd;
         int _port;
 
         bool _isRunning;
 
         Parser _parser;
-        CommandsList _commandsList;
 
         std::string _name;
         std::string _password;
         sockaddr_in _server_adress;
 
+        CommandsList _commandsList;
         std::vector<pollfd> _fds;
         std::map<int, Client*> _clients;
         std::map<std::string, Channel*> _channels;
-        std::map<std::string, ACommand*> _commands;
         
         void initialisation(int argc, char** argv);
         int addNewClient();
         void receiveNewSignal(size_t& i);
         void handleCommands(Client* client, std::vector<std::string> commandLines);
+        void sendWelcomeMessage(Client& client);
 
+        Server(int argc, char**argv);
 
     public:
-        Server(int argc, char**argv);
         ~Server();
-        
+
+        static Server* getInstance(int argc = 0, char** argv = NULL);
+
+        std::map<std::string, Channel*>& getChannels();
+
         void run();
 };

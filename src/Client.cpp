@@ -1,4 +1,5 @@
-#include "Client.hpp"
+#include "../inc/Client.hpp"
+#include "../inc/Channel.hpp"
 
 Client::Client(int fd) 
     : _fd(fd), _state(NOT_REGISTERED) {}
@@ -21,8 +22,17 @@ void Client::setState(ClientState state) { _state = state; }
 
 void Client::reply(const std::string& reply)
 {
-    std::string serverName = SERVER_NAME;
+    std::string serverName(SERVER_NAME);
     this->write(":" + serverName + " " + reply);
+}
+
+void Client::leaveChannel(Channel* channel)
+{
+    if (_channels.find(channel->getName()) != _channels.end())
+    {
+        _channels.erase(channel->getName());
+        std::cout << "Client " << _nickname << " has left channel " << channel->getName() << std::endl;
+    }
 }
 
 void Client::write(const std::string& message)

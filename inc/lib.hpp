@@ -20,5 +20,10 @@
 
 #define ERR_NEEDMOREPARAMS(client, command) "461 " + client + " " + command + " :Not enough parameters"
 #define ERR_ALREADYREGISTERED(client) "462 " + client + " :You may not reregister"
+#define ERR_NOSUCHCHANNEL(client, channel) "403 " + client + " " + channel + " :No such channel"
+#define ERR_NOTREGISTERED() "451 :You have not registered"
+
+#define RPL_JOIN(prefix, channel) ":" + prefix + " JOIN :" + channel
+#define RPL_WELCOME(client) "001 " + client + " :Welcome to the Internet Relay Network ft_irc " + client
 
 #define MAX_CLIENTS 5

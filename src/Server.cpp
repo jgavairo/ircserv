@@ -1,5 +1,7 @@
 #include "Server.hpp"
 
+Server* Server::_instance = NULL;
+
 Server::Server(int argc, char**argv)
 {
     initialisation(argc, argv);
@@ -8,6 +10,22 @@ Server::Server(int argc, char**argv)
 Server::~Server()
 {
 
+}
+
+std::map<std::string, Channel*>& Server::getChannels()
+{
+    return _channels;
+}
+
+Server* Server::getInstance(int argc, char**argv)
+{
+    if (_instance == NULL)
+    {
+        if (argc == 0 || argv == NULL)
+            throw std::runtime_error("Server must be initialized with arguments first.");
+        _instance = new Server(argc, argv);
+    }
+    return _instance;
 }
 
 void Server::initialisation(int argc, char**argv)

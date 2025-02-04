@@ -11,8 +11,9 @@ DEPDIR = tmpDep
 SRCS = 	main.cpp Client.cpp Server.cpp Channel.cpp Parser.cpp \
 		commands/Nick.cpp \
 		commands/User.cpp \
-		commands/CommandsList.cpp \
-		commands/ACommand.cpp
+		commands/Join.cpp \
+		commands/ACommand.cpp \
+		commands/CommandsList.cpp
 OBJS = $(addprefix $(OBJDIR)/, $(SRCS:.cpp=.o))
 DEPS = $(addprefix $(DEPDIR)/, $(SRCS:.cpp=.d))
 

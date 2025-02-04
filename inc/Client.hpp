@@ -21,7 +21,6 @@ class Client
         std::string _username;
         std::string _hostname;
         std::string _realname;
-        std::set<Channel*> _channels; // liste des channels sur lesquels le client est connecte
     public:
         Client(int fd);
         ~Client();
@@ -40,5 +39,9 @@ class Client
 
         void reply(const std::string& reply);
         void write(const std::string& message);
+
+        void leaveChannel(Channel* channel);
+
+        std::map<std::string, Channel*> _channels; // liste des channels sur lesquels le client est connecte, a passer en PRIVE
 };
 
