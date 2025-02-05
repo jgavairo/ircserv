@@ -132,6 +132,11 @@ void Server::handleCommands(Client* client, std::vector<std::string> commandLine
     }
 }
 
+std::map<int, Client*>& Server::getClients()
+{
+    return _clients;
+}
+
 void Server::run()
 {
     pollfd server_poll_fd = {_fd, POLLIN, 0};

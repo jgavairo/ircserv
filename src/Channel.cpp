@@ -22,6 +22,14 @@ void Channel::addClient(Client* client)
     client->_channels[this->_name] = this;
 }
 
+void Channel::broadcast(const std::string& message, Client* sender)
+{
+    for (std::map<std::string, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+    {
+        if (it->second != sender)
+            it->second->reply(message);
+    }
+}
 
 void Channel::removeClient(Client* client)
 {

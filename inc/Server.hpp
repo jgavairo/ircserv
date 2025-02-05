@@ -39,6 +39,7 @@ class Server
         static Server* getInstance(int argc = 0, char** argv = NULL);
 
         std::map<std::string, Channel*>& getChannels();
+        std::map<int, Client*>& getClients();
 
         void run();
 };

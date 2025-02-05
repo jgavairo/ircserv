@@ -2,7 +2,7 @@
 #include "../inc/Channel.hpp"
 
 Client::Client(int fd) 
-    : _fd(fd), _state(NOT_REGISTERED) {}
+    : _fd(fd), _state(NOT_REGISTERED), _hostname("localhost") {}
 
 Client::~Client() {}
 
@@ -34,11 +34,29 @@ void Client::leaveChannel(Channel* channel)
         std::cout << "Client " << _nickname << " has left channel " << channel->getName() << std::endl;
     }
 }
+std::string Client::getPrefix() const 
+{
+    std::string username = _username.empty() ? "" : "!" + _username;
+    std::string hostname = _hostname.empty() ? "" : "@" + _hostname;
+
+    std::cout << "USERNAME: " << _username << std::endl;
+    std::cout << "HOSTNAME: " << _hostname << std::endl;
+    std::cout << "NICKNAME: " << _nickname << std::endl;
+
+	return (_nickname + username + hostname);
+}
 
 void Client::write(const std::string& message)
 {
     std::string finalMessage = message + CRLF;
     std::cout << _nickname << message << std::endl;
+    if (send(_fd, finalMessage.c_str(), finalMessage.length(), 0) < 0)
+        throw (std::runtime_error("writing message from client failed"));
+}
+
+void Client::userReply(const std::string& message)
+{
+    std::string finalMessage = message + CRLF;
     if (send(_fd, finalMessage.c_str(), finalMessage.length(), 0) < 0)
         throw (std::runtime_error("writing message from client failed"));
 }

@@ -22,4 +22,5 @@ class Channel
         void addClient(Client* client);
         void removeClient(Client* client);
         void displayClients() const;
+        void broadcast(const std::string& message, Client* sender);
 };

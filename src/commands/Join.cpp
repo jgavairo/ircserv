@@ -39,12 +39,16 @@ void Join::execute(Client* client, std::string arguments)
 
     channels[channelName]->addClient(client);
 
-    client->reply(RPL_JOIN(client->getNickname(), channelName));
+
+    client->write(RPL_JOIN(client->getPrefix(), channelName));
 
     std::cout << "Client " << client->getFd() << " joined channel: " << channelName << std::endl;
 
-    std::cout << "List of channels:\n" << std::endl;
-
-    for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); ++it)
-        std::cout << "Channel name: " << it->first << std::endl;
+    /*---------------------------------------------------------------------------------------------------*/
+    //print list channels:
+    /**/std::cout << "List of channels:\n" << std::endl;
+    /**/
+    /**/for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); ++it)
+    /**/    std::cout << "Channel name: " << it->first << std::endl;
+    /*---------------------------------------------------------------------------------------------------*/
 }

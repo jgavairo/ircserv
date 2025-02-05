@@ -22,6 +22,8 @@
 #define ERR_ALREADYREGISTERED(client) "462 " + client + " :You may not reregister"
 #define ERR_NOSUCHCHANNEL(client, channel) "403 " + client + " " + channel + " :No such channel"
 #define ERR_NOTREGISTERED() "451 :You have not registered"
+#define ERR_NICKNAMEINUSE(nick) "433 " + nick + " " + nick + " nickname is already in use"
+#define RPL_NICK(oldPrefix, newNick) ":" + oldPrefix + " NICK :" + newNick
 
 #define RPL_JOIN(prefix, channel) ":" + prefix + " JOIN :" + channel
 #define RPL_WELCOME(client) "001 " + client + " :Welcome to the Internet Relay Network ft_irc " + client

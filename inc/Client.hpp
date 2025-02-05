@@ -25,6 +25,7 @@ class Client
         Client(int fd);
         ~Client();
 
+        std::string getPrefix() const;
         const std::string& getNickname() const;
         const std::string& getUsername() const;
         const std::string& getHostname() const;
@@ -38,6 +39,7 @@ class Client
         void setState(ClientState state);
 
         void reply(const std::string& reply);
+        void userReply(const std::string& message);
         void write(const std::string& message);
 
         void leaveChannel(Channel* channel);
