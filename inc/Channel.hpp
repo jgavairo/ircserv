@@ -19,6 +19,7 @@ class Channel
 
         const std::string getName() const;
 
+        void updateNickname(const std::string& old_, const std::string& new_);
         void addClient(Client* client);
         void removeClient(Client* client);
         void displayClients() const;

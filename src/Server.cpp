@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "../inc/Channel.hpp"
 
 Server* Server::_instance = NULL;
 
@@ -130,6 +131,12 @@ void Server::handleCommands(Client* client, std::vector<std::string> commandLine
             _commandsList._list[commandName]->execute(client, arguments);
         }
     }
+}
+
+void Server::updateNickInChannels(const std::string& old_, const std::string& new_)
+{
+    for (std::map<std::string, Channel*>::const_iterator it = _channels.begin(); it != _channels.end(); ++it)
+        it->second->updateNickname(old_, new_);
 }
 
 std::map<int, Client*>& Server::getClients()

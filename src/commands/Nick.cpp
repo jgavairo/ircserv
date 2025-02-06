@@ -1,5 +1,6 @@
 #include "../../inc/commands/Nick.hpp"
 #include "../../inc/Server.hpp"
+#include "../../inc/Channel.hpp"
 
 Nick::Nick() {}
 
@@ -24,9 +25,6 @@ void Nick::execute(Client* client, std::string arguments)
     }
 
     std::string old_nick = client->getNickname();
-    client->setNickname(new_nickname);
-    if (client->getState() == REGISTERED)
-        client->write(RPL_NICK(client->getPrefix(), new_nickname));
     if (client->getState() == WAITING_FOR_NICK)
     {
         client->setState(REGISTERED);
@@ -34,5 +32,26 @@ void Nick::execute(Client* client, std::string arguments)
     }
     else if (client->getState() == NOT_REGISTERED)
         client->setState(WAITING_FOR_USER);
+    if (client->getState() == REGISTERED)
+        client->write(RPL_NICK(client->getPrefix(), new_nickname));
+    server->updateNickInChannels(old_nick, new_nickname);
+    client->setNickname(new_nickname);
+
+    std::cout << "\n\n\t---CHECK DES NICK DANS CHAQUE CONTAINER---" << std::endl;
+    std::cout << "\n\t---DANS _CLIENTS(SERVER)---" << std::endl;
+    std::map<int, Client*>& clientsList2 = server->getClients();
+    for (std::map<int, Client*>::iterator itt = clientsList2.begin(); itt != clientsList2.end(); ++itt)
+        std::cout << "\t" << itt->second->getNickname() << std::endl;
+
+    std::cout << "\n\t---DANS LES CHANNELS(SERVER)---" << std::endl;
+    const std::map<std::string, Channel*>& channelList = server->getChannels();
+    for (std::map<std::string, Channel*>::const_iterator it = channelList.begin(); it != channelList.end(); ++it)
+    {
+        std::cout << "\tfor channel " << it->first << ":" << std::endl;
+        std::cout << "\t";
+        it->second->displayClients();
+        std::cout << std::endl;
+    }
+
     std::cout << "----Command 'NICK' has been executed on client " << client->getFd() << ". her nickname is now " << client->getNickname() << "----" << std::endl;
 }

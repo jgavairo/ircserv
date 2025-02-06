@@ -31,6 +31,16 @@ void Channel::broadcast(const std::string& message, Client* sender)
     }
 }
 
+void Channel::updateNickname(const std::string& old_, const std::string& new_)
+{
+    std::map<std::string, Client*>::iterator it = _clients.find(old_);
+    if (it != _clients.end())
+    {
+        Client* clientPtr = it->second;
+        _clients.erase(it);
+        _clients.insert(std::make_pair(new_, clientPtr));
+    }
+}
 void Channel::removeClient(Client* client)
 {
     if (_clients.find(client->getNickname()) != _clients.end())
@@ -54,5 +64,6 @@ void Channel::removeClient(Client* client)
 
 void Channel::displayClients() const
 {
-
+    for (std::map<std::string, Client*>::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
+        std::cout << it->first << " : " << it->second->getNickname() << std::endl;
 }
