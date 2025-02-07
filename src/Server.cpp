@@ -39,6 +39,7 @@ void Server::initialisation(int argc, char**argv)
     if (_fd < 0)
         throw(std::runtime_error("Initialisation: FAIL (socket failed)"));
 
+    fcntl(_fd, F_SETFL, O_NONBLOCK);
     //initialisation adress
     std::memset(&_server_adress, 0, sizeof(_server_adress));
     _server_adress.sin_family = AF_INET;
@@ -64,17 +65,25 @@ int Server::addNewClient()
     int client_socket = accept(_fd, (sockaddr*)&client_adress, &client_len);
     if (client_socket < 0)
     {
-        std::cerr << "Error accept() client connexion failed." << std::endl;
+        if (errno != EWOULDBLOCK && errno != EAGAIN)
+            std::cerr << "Error accept() client connexion failed." << std::endl;
         return -1;
     }
+    fcntl(client_socket, F_SETFL, O_NONBLOCK);
     std::cout << "New client connected: " << client_socket << std::endl;
 
     std::string initialResponse = ":irc.example.com NOTICE * :Welcome to My IRC Server!\r\n";
-    send(client_socket, initialResponse.c_str(), initialResponse.size(), 0);
-
-    pollfd client_poll_fd = {client_socket, POLLIN, 0};
-    _fds.push_back(client_poll_fd);
-
+    ssize_t bytes_sent = send(client_socket, initialResponse.c_str(), initialResponse.size(), 0);
+    if (bytes_sent < 0 && (errno == EWOULDBLOCK || errno == EAGAIN)) 
+    {
+        pollfd client_poll_fd = {client_socket, POLLIN | POLLOUT, 0};  // Ajout de POLLOUT
+        _fds.push_back(client_poll_fd);
+    }
+    else 
+    {
+        pollfd client_poll_fd = {client_socket, POLLIN, 0};
+        _fds.push_back(client_poll_fd);
+    }
     Client* new_client= new Client(client_socket);
     _clients[client_socket] = new_client;
 
@@ -87,7 +96,8 @@ void Server::receiveNewSignal(size_t& i)
 {
     char buffer[1024];
     ssize_t bytes_received = recv(_fds[i].fd, buffer, sizeof(buffer) - 1, 0);
-    
+    int saved_errno = errno;
+
     if (bytes_received == 0)
     {
         //deconnexion du client
@@ -100,6 +110,8 @@ void Server::receiveNewSignal(size_t& i)
     else if (bytes_received < 0)
     {
         //erreur
+        if (saved_errno == EWOULDBLOCK || errno == EAGAIN)
+            return ;
         std::cout << "Error: impossible to reading from client, " << strerror(errno) << std::endl;
         close(_fds[i].fd);
         delete _clients[_fds[i].fd];

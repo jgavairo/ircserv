@@ -32,13 +32,17 @@ void User::execute(Client* client, std::string arguments)
 
         client->setUsername(splittedArgs[0]);
         client->setRealname(splittedArgs[3]);
-        if (client->getState() == WAITING_FOR_USER)
+        if (client->getState() == NOT_REGISTERED)
+        {
+            client->setState(WAITING_FOR_NICK);
+        }
+        else if (client->getState() == WAITING_FOR_USER)
         {
             client->setState(REGISTERED);
             client->reply(RPL_WELCOME(client->getNickname()));
         }
-        else if (client->getState() == NOT_REGISTERED)
-            client->setState(WAITING_FOR_NICK);
+        if (client->getState() == REGISTERED)
+            std::cout << "RPL USER" << std::endl; //a ajouter!!!
         std::cout << "----Command 'USER' has been executed on client " << client->getFd() << ". her username is now " << client->getUsername() << "----" << std::endl;
         std::cout << "                                                  " << "her realname is now " << client->getRealname() << "----" << std::endl;
     }

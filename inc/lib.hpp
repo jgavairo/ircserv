@@ -12,6 +12,7 @@
 #include <map>
 #include <vector>
 #include <iterator>
+#include <fcntl.h>
 #include <set>
 #include <poll.h>
 

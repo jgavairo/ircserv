@@ -45,7 +45,7 @@ std::string Client::getPrefix() const
 
 	return (_nickname + username + hostname);
 }
-
+// EVENTUELLEMENT CHANGER LES FONCTIONNEMENT DES SEND() POUR LE SOCKET NON BLOQUANT
 void Client::write(const std::string& message)
 {
     std::string finalMessage = message + CRLF;
