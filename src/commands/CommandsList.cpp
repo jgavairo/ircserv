@@ -9,7 +9,7 @@ CommandsList::CommandsList()
     _list["NICK"] = new Nick();
     _list["USER"] = new User();
     _list["JOIN"] = new Join();
-    // _list["PRIVMSG"] = new Privmsg();
+    _list["PRIVMSG"] = new Privmsg();
 
     //ADD ALL COMMANDES
 }

@@ -41,6 +41,7 @@ void Join::execute(Client* client, std::string arguments)
 
 
     client->write(RPL_JOIN(client->getPrefix(), channelName));
+    channels[channelName]->broadcast(RPL_JOIN(client->getPrefix(), channelName), client);
 
     std::cout << "Client " << client->getFd() << " joined channel: " << channelName << std::endl;
 

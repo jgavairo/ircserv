@@ -21,6 +21,7 @@ class Client
         std::string _username;
         std::string _hostname;
         std::string _realname;
+        std::string _password;
     public:
         Client(int fd);
         ~Client();
