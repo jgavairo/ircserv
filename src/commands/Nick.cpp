@@ -8,6 +8,11 @@ Nick::~Nick() {}
 
 void Nick::execute(Client* client, std::string arguments)
 {
+    if (arguments.empty())
+    {
+        client->reply(ERR_NONICKNAMEGIVEN(client->getNickname()));
+        return ;
+    }
     std::istringstream iss(arguments);
     std::string new_nickname;
     iss >> new_nickname;
@@ -28,30 +33,36 @@ void Nick::execute(Client* client, std::string arguments)
     if (client->getState() == WAITING_FOR_NICK)
     {
         client->setState(REGISTERED);
-        client->reply(RPL_WELCOME(client->getNickname()));
     }
     else if (client->getState() == NOT_REGISTERED)
         client->setState(WAITING_FOR_USER);
     if (client->getState() == REGISTERED)
-        client->write(RPL_NICK(client->getPrefix(), new_nickname));
+        client->reply(RPL_WELCOME(new_nickname));
+
+    for (std::map<std::string, Channel*>::iterator it = client->_channels.begin(); it != client->_channels.end(); ++it)
+        it->second->broadcast(RPL_NICK(client->getPrefix(), new_nickname), client);
+
+    client->write(RPL_NICK(client->getPrefix(), new_nickname));
     server->updateNickInChannels(old_nick, new_nickname);
     client->setNickname(new_nickname);
+    
 
-    std::cout << "\n\n\t---CHECK DES NICK DANS CHAQUE CONTAINER---" << std::endl;
-    std::cout << "\n\t---DANS _CLIENTS(SERVER)---" << std::endl;
-    std::map<int, Client*>& clientsList2 = server->getClients();
-    for (std::map<int, Client*>::iterator itt = clientsList2.begin(); itt != clientsList2.end(); ++itt)
-        std::cout << "\t" << itt->second->getNickname() << std::endl;
 
-    std::cout << "\n\t---DANS LES CHANNELS(SERVER)---" << std::endl;
-    const std::map<std::string, Channel*>& channelList = server->getChannels();
-    for (std::map<std::string, Channel*>::const_iterator it = channelList.begin(); it != channelList.end(); ++it)
-    {
-        std::cout << "\tfor channel " << it->first << ":" << std::endl;
-        std::cout << "\t";
-        it->second->displayClients();
-        std::cout << std::endl;
-    }
+    // std::cout << "\n\n\t---CHECK DES NICK DANS CHAQUE CONTAINER---" << std::endl;
+    // std::cout << "\n\t---DANS _CLIENTS(SERVER)---" << std::endl;
+    // std::map<int, Client*>& clientsList2 = server->getClients();
+    // for (std::map<int, Client*>::iterator itt = clientsList2.begin(); itt != clientsList2.end(); ++itt)
+    //     std::cout << "\t" << itt->second->getNickname() << std::endl;
+
+    // std::cout << "\n\t---DANS LES CHANNELS(SERVER)---" << std::endl;
+    // const std::map<std::string, Channel*>& channelList = server->getChannels();
+    // for (std::map<std::string, Channel*>::const_iterator it = channelList.begin(); it != channelList.end(); ++it)
+    // {
+    //     std::cout << "\tfor channel " << it->first << ":" << std::endl;
+    //     std::cout << "\t";
+    //     it->second->displayClients();
+    //     std::cout << std::endl;
+    // }
 
     std::cout << "----Command 'NICK' has been executed on client " << client->getFd() << ". her nickname is now " << client->getNickname() << "----" << std::endl;
 }

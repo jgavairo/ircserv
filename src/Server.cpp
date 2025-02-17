@@ -31,6 +31,7 @@ Server* Server::getInstance(int argc, char**argv)
 
 void Server::initialisation(int argc, char**argv)
 {
+    _name = SERVER_NAME;
     _parser.parametersChecker(argc, argv, _port);
     std::cout << "Server initialisation..." << std::endl;
     _isRunning = false;

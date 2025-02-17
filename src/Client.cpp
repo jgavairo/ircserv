@@ -38,11 +38,6 @@ std::string Client::getPrefix() const
 {
     std::string username = _username.empty() ? "" : "!" + _username;
     std::string hostname = _hostname.empty() ? "" : "@" + _hostname;
-
-    std::cout << "USERNAME: " << _username << std::endl;
-    std::cout << "HOSTNAME: " << _hostname << std::endl;
-    std::cout << "NICKNAME: " << _nickname << std::endl;
-
 	return (_nickname + username + hostname);
 }
 // EVENTUELLEMENT CHANGER LES FONCTIONNEMENT DES SEND() POUR LE SOCKET NON BLOQUANT
