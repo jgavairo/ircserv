@@ -40,7 +40,11 @@ void Nick::execute(Client* client, std::string arguments)
         client->reply(RPL_WELCOME(new_nickname));
 
     for (std::map<std::string, Channel*>::iterator it = client->_channels.begin(); it != client->_channels.end(); ++it)
+    {
         it->second->broadcast(RPL_NICK(client->getPrefix(), new_nickname), client);
+        std::string noticeMessage = ":" + client->getPrefix() + " NOTICE " + it->second->getName() + " :" + old_nick + " is now known as " + new_nickname;
+        it->second->broadcast(noticeMessage, client);
+    }
 
     client->write(RPL_NICK(client->getPrefix(), new_nickname));
     server->updateNickInChannels(old_nick, new_nickname);
