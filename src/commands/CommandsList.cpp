@@ -5,6 +5,8 @@
 #include "../../inc/commands/Privmsg.hpp"
 #include "../../inc/commands/Notice.hpp"
 #include "../../inc/commands/Pass.hpp"
+#include "../../inc/commands/Quit.hpp"
+//#include "../../inc/commands/Mode.hpp"
 
 CommandsList::CommandsList()
 {
@@ -14,11 +16,10 @@ CommandsList::CommandsList()
     _list["PRIVMSG"] = new Privmsg();
     _list["NOTICE"] = new Notice();
     _list["PASS"] = new Pass();
+    _list["QUIT"] = new Quit();
+    //_list["MODE"] = new Mode();
 
     //ADD ALL COMMANDES
 }
 
 CommandsList::~CommandsList() {}
-
-
-

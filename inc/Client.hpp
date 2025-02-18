@@ -36,7 +36,6 @@ class Client
         int getFd() const;
         ClientState getState() const;
         
-
         void setNickname(const std::string& nickname);
         void setUsername(const std::string& nickname);
         void setPassword(const std::string& password);

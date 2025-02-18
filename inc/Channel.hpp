@@ -12,6 +12,8 @@ class Channel
         std::string _password;
         std::string _topic;
         std::set<Client*> _whitelist;
+        std::string _mode; // Ajout de l'attribut _mode
+
     public:
         std::map<std::string, Client*> _clients;
         Channel(const std::string& name);
@@ -24,4 +26,7 @@ class Channel
         void removeClient(Client* client);
         void displayClients() const;
         void broadcast(const std::string& message, Client* sender);
+
+        //void setMode(const std::string& mode); // Ajout de la méthode setMode
+        //bool isOperator(Client* client); // Ajout de la méthode isOperator
 };
