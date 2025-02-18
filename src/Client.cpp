@@ -22,15 +22,13 @@ void Client::setPassword(const std::string& password) { _password = password; }
 void Client::setRealname(const std::string& realname) { _realname = realname; }
 void Client::setState(ClientState state) { _state = state; }
 
+bool Client::isAuthenticated() { return _authenticated; }
+bool Client::isOperator() { return _operator; }
+
 void Client::reply(const std::string& reply)
 {
     std::string serverName(SERVER_NAME);
     this->write(":" + serverName + " " + reply);
-}
-
-bool Client::isAuthenticated()
-{
-    return _authenticated;
 }
 
 void Client::setAuth(bool state) { _authenticated = state; }

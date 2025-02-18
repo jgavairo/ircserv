@@ -15,6 +15,7 @@ SRCS = 	main.cpp Client.cpp Server.cpp Channel.cpp Parser.cpp \
 		commands/Privmsg.cpp \
 		commands/Pass.cpp \
 		commands/Notice.cpp \
+		commands/Topic.cpp \
 		commands/ACommand.cpp \
 		commands/CommandsList.cpp \
 		commands/Quit.cpp 

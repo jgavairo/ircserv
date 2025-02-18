@@ -23,6 +23,7 @@ class Client
         std::string _realname;
         std::string _password;
         bool        _authenticated;
+        bool        _operator;
     public:
         Client(int fd);
         ~Client();
@@ -49,6 +50,8 @@ class Client
         void write(const std::string& message);
 
         bool isAuthenticated();
+        bool isOperator();
+
         void leaveChannel(Channel* channel);
 
         std::map<std::string, Channel*> _channels; // liste des channels sur lesquels le client est connecte, a passer en PRIVE
