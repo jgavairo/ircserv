@@ -6,6 +6,11 @@ User::~User() {}
 
 void User::execute(Client* client, std::string arguments)
 {
+    if (!client->isAuthenticated())
+    {
+        client->reply(ERR_NOTREGISTERED());
+        return ;
+    }
     if (client->getState() == REGISTERED)
     {
         client->reply(ERR_ALREADYREGISTERED(client->getNickname()));

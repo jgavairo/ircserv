@@ -30,6 +30,8 @@
 #define ERR_CANNOTSENDTOCHAN(client, channel) "404 " + client + " " + channel + " :Cannot send to channel"
 #define ERR_NOSUCHNICK(client, nick) "401 " + client + " " + nick + " :No such nick/channel"
 
+#define ERR_PASSWDMISMATCH(client) "464 " + client + " :Password incorrect"
+
 #define ERR_NONICKNAMEGIVEN(client) "431 " + client + " :No nickname given"
 #define ERR_ERRONEUSNICKNAME(client, nick) "432 " + client + " " + nick + " :Erroneous nickname"
 

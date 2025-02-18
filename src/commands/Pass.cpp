@@ -24,7 +24,8 @@ void Pass::execute(Client* client, std::string arguments)
     if (client->getPassword() == server->getPassword())
         client->setAuth(true);
     else
+    {
         client->setAuth(false);
-
-  //  std::cout << "pass argument [" << arguments << "]" << std::endl;
+        client->reply(ERR_PASSWDMISMATCH(client->getNickname()));
+    }
 }

@@ -8,6 +8,11 @@ Nick::~Nick() {}
 
 void Nick::execute(Client* client, std::string arguments)
 {
+    if (!client->isAuthenticated())
+    {
+        client->reply(ERR_NOTREGISTERED());
+        return ;
+    }
     if (arguments.empty())
     {
         client->reply(ERR_NONICKNAMEGIVEN(client->getNickname()));
