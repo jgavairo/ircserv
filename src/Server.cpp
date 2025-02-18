@@ -29,6 +29,8 @@ Server* Server::getInstance(int argc, char**argv)
     return _instance;
 }
 
+const std::string& Server::getPassword() const { return _password; }
+
 void Server::initialisation(int argc, char**argv)
 {
     _name = SERVER_NAME;

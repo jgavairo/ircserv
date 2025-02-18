@@ -1,0 +1,30 @@
+#include "../../inc/commands/Pass.hpp"
+#include "../../inc/Server.hpp"
+#include "../../inc/Channel.hpp"
+
+Pass::Pass() {}
+
+Pass::~Pass() {}
+
+void Pass::execute(Client* client, std::string arguments)
+{
+
+    if (arguments.empty())
+    {
+        (client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "PASS")));
+        return ;
+    }
+    else
+    {
+        if (arguments[0] == ' ')
+            arguments.erase(0, 1);
+        client->setPassword(arguments);
+    }
+    Server* server = Server::getInstance();
+    if (client->getPassword() == server->getPassword())
+        client->setAuth(true);
+    else
+        client->setAuth(false);
+
+  //  std::cout << "pass argument [" << arguments << "]" << std::endl;
+}

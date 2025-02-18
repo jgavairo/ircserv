@@ -37,6 +37,8 @@ class Server
         ~Server();
 
         static Server* getInstance(int argc = 0, char** argv = NULL);
+        
+        const std::string& getPassword() const;
 
         void updateNickInChannels(const std::string& old_, const std::string& new_);
         std::map<std::string, Channel*>& getChannels();

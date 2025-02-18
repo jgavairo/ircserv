@@ -4,6 +4,7 @@
 #include "../../inc/commands/Join.hpp"
 #include "../../inc/commands/Privmsg.hpp"
 #include "../../inc/commands/Notice.hpp"
+#include "../../inc/commands/Pass.hpp"
 
 CommandsList::CommandsList()
 {
@@ -12,6 +13,7 @@ CommandsList::CommandsList()
     _list["JOIN"] = new Join();
     _list["PRIVMSG"] = new Privmsg();
     _list["NOTICE"] = new Notice();
+    _list["PASS"] = new Pass();
 
     //ADD ALL COMMANDES
 }

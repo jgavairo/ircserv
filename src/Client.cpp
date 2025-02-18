@@ -10,6 +10,7 @@ Client::~Client() {}
 int Client::getFd() const { return _fd; }
 const std::string& Client::getHostname() const { return _hostname; }
 const std::string& Client::getRealname() const { return _realname; }
+const std::string& Client::getPassword() const { return _password; }
 const std::string& Client::getUsername() const { return _username; }
 const std::string& Client::getNickname() const { return _nickname; }
 ClientState Client::getState() const { return _state; }
@@ -17,6 +18,7 @@ ClientState Client::getState() const { return _state; }
 //setters
 void Client::setNickname(const std::string& nickname) { _nickname = nickname; }
 void Client::setUsername(const std::string& username) { _username = username; }
+void Client::setPassword(const std::string& password) { _password = password; }
 void Client::setRealname(const std::string& realname) { _realname = realname; }
 void Client::setState(ClientState state) { _state = state; }
 
@@ -25,6 +27,13 @@ void Client::reply(const std::string& reply)
     std::string serverName(SERVER_NAME);
     this->write(":" + serverName + " " + reply);
 }
+
+bool Client::isAuthenticated()
+{
+    return _authenticated;
+}
+
+void Client::setAuth(bool state) { _authenticated = state; }
 
 void Client::leaveChannel(Channel* channel)
 {
@@ -40,7 +49,7 @@ std::string Client::getPrefix() const
     std::string hostname = _hostname.empty() ? "" : "@" + _hostname;
 	return (_nickname + username + hostname);
 }
-// EVENTUELLEMENT CHANGER LES FONCTIONNEMENT DES SEND() POUR LE SOCKET NON BLOQUANT
+
 void Client::write(const std::string& message)
 {
     std::string finalMessage = message + CRLF;
