@@ -35,14 +35,15 @@ class Server
 
     public:
         ~Server();
-
-        static Server* getInstance(int argc = 0, char** argv = NULL);
         
-        const std::string& getPassword() const;
+        void run();
+        static Server* getInstance(int argc = 0, char** argv = NULL);
 
-        void updateNickInChannels(const std::string& old_, const std::string& new_);
         std::map<std::string, Channel*>& getChannels();
         std::map<int, Client*>& getClients();
+        const std::string& getPassword() const;
 
-        void run();
+        void removeEmptyChannel(const std::string& name);
+        void updateNickInChannels(const std::string& old_, const std::string& new_);
+
 };

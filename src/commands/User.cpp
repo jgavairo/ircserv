@@ -17,8 +17,6 @@ void User::execute(Client* client, std::string arguments)
         return ;
     }
     std::vector<std::string> splittedArgs(splitArguments(arguments));
-    // for (size_t i = 0; i < splittedArgs.size(); i++)
-    //     std::cout << "splittedargs[" << i << "] = " << splittedArgs[i] << std::endl;
     if (splittedArgs.size() < 4)
     {
         client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), std::string("USER")));

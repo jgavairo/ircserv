@@ -8,6 +8,13 @@ Notice::~Notice() {}
 
 void Notice::execute(Client* client, std::string arguments) 
 {
+    //Verification des droits (client authentifie)
+    if (client->getState() != REGISTERED)
+    {
+        client->reply(ERR_NOTREGISTERED());
+        return ;
+    }
+
     // Extraire la cible et le message
     std::istringstream iss(arguments);
     std::string target;

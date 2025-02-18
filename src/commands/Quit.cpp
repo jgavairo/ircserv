@@ -24,12 +24,12 @@ void Quit::execute(Client* client, std::string arguments)
     // }
 
     Server* server = Server::getInstance();
-    std::map<std::string, Channel*>& channels = server->getChannels();
+    std::map<std::string, Channel*> channels = server->getChannels();
 
     for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); ++it)
     {
-        it->second->removeClient(client);
         it->second->broadcast(client->getNickname() + " has left the channel: " + quitMessage, client);
+        it->second->removeClient(client);
     }
 
     int clientFd = client->getFd();

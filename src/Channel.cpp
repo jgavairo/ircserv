@@ -1,6 +1,7 @@
 #include "../inc/Channel.hpp"
+#include "../inc/Server.hpp"
 
-Channel::Channel(const std::string& name) :_name(name), _topic("") {}
+Channel::Channel(const std::string& name) :_name(name), _topic(""), _empty(true) {}
 
 Channel::~Channel() {}
 
@@ -18,9 +19,15 @@ void Channel::addClient(Client* client)
         std::cerr << "ERROR: this channel is already joined by this client." << std::endl;
         return;
     }
-    _clients[client->getNickname()] = client;
-    client->_channels[this->_name] = this;
+    else
+    {
+        _empty = false;
+        _clients[client->getNickname()] = client;
+        client->_channels[this->_name] = this;
+    }
 }
+
+bool Channel::isEmpty() const { return _empty; }
 
 void Channel::broadcast(const std::string& message, Client* sender)
 {
@@ -53,11 +60,12 @@ void Channel::removeClient(Client* client)
         if (_clients.empty())
         {
             std::cout << "Channel " << _name << " is now empty and will be deleted.\n";
-
-            //Ajouter la fonction d'instance du server 
-
-            // Server* server = Server::getInstance(); // Si tu as un singleton Server
-            //server->removeEmptyChannel(_name);
+            _empty = true;
+            
+            Server* server = Server::getInstance();
+            server->removeEmptyChannel(_name);
+            
+            delete this;
         }
     }
 }

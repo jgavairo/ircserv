@@ -8,6 +8,13 @@ Privmsg::~Privmsg() {}
 
 void Privmsg::execute(Client* client, std::string arguments)
 {
+    //Verification des droits (client authentifie)
+    if (client->getState() != REGISTERED)
+    {
+        client->reply(ERR_NOTREGISTERED());
+        return ;
+    }
+
     std::istringstream iss(arguments);
     std::string newArguments;
     std::vector<std::string> clientsTargets;

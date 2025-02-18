@@ -31,6 +31,20 @@ Server* Server::getInstance(int argc, char**argv)
 
 const std::string& Server::getPassword() const { return _password; }
 
+void Server::removeEmptyChannel(const std::string& name) 
+{
+    // Recherchez le canal par son nom
+    std::map<std::string, Channel*>::iterator it = _channels.find(name);
+    if (it != _channels.end())
+    {
+        // Vérifiez si le canal est vide
+        if (it->second->isEmpty()) {
+            // Supprimez l'entrée du canal de la liste
+            _channels.erase(it);
+        }
+    }
+}
+
 void Server::initialisation(int argc, char**argv)
 {
     _name = SERVER_NAME;

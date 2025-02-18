@@ -11,15 +11,17 @@ class Channel
         std::string _name;
         std::string _password;
         std::string _topic;
-        std::set<Client*> _whitelist;
         std::string _mode; // Ajout de l'attribut _mode
 
+        bool    _empty;
     public:
         std::map<std::string, Client*> _clients;
         Channel(const std::string& name);
         ~Channel();
 
         const std::string getName() const;
+
+        bool isEmpty() const;
 
         void updateNickname(const std::string& old_, const std::string& new_);
         void addClient(Client* client);
