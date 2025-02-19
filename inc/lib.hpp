@@ -30,6 +30,10 @@
 #define ERR_CANNOTSENDTOCHAN(client, channel) "404 " + client + " " + channel + " :Cannot send to channel"
 #define ERR_NOSUCHNICK(client, nick) "401 " + client + " " + nick + " :No such nick/channel"
 
+#define RPL_NOTOPIC(client, channel) "331 " + client + " " + channel + " :No topic is set"
+#define RPL_TOPIC(client, channel, topic) "332 " + client + " " + channel + " :" + topic
+#define ERR_CHANOPRIVSNEEDED(client, channel) "482 " + client + " " + channel + " :You're not channel operator"
+
 #define ERR_PASSWDMISMATCH(client) "464 " + client + " :Password incorrect"
 
 #define ERR_NONICKNAMEGIVEN(client) "431 " + client + " :No nickname given"

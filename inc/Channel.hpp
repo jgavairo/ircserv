@@ -20,6 +20,7 @@ class Channel
         ~Channel();
 
         const std::string getName() const;
+        const std::string getTopic() const;
 
         bool isEmpty() const;
 
@@ -28,6 +29,8 @@ class Channel
         void removeClient(Client* client);
         void displayClients() const;
         void broadcast(const std::string& message, Client* sender);
+
+        void setTopic(const std::string& newTopic);
 
         //void setMode(const std::string& mode); // Ajout de la méthode setMode
         //bool isOperator(Client* client); // Ajout de la méthode isOperator

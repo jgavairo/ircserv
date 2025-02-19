@@ -54,6 +54,7 @@ class Client
 
         void leaveChannel(Channel* channel);
 
+        Channel* searchChannel(const std::string& name);
         std::map<std::string, Channel*> _channels; // liste des channels sur lesquels le client est connecte, a passer en PRIVE
 };
 

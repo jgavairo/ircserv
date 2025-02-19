@@ -41,6 +41,17 @@ void Client::leaveChannel(Channel* channel)
         std::cout << "Client " << _nickname << " has left channel " << channel->getName() << std::endl;
     }
 }
+
+Channel* Client::searchChannel(const std::string& name)
+{
+    for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it)
+    {
+        if (it->first == name)
+            return it->second;
+    }
+    return NULL;
+}
+
 std::string Client::getPrefix() const 
 {
     std::string username = _username.empty() ? "" : "!" + _username;

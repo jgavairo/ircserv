@@ -7,6 +7,10 @@ Channel::~Channel() {}
 
 const std::string Channel::getName() const { return _name; }
 
+const std::string Channel::getTopic() const { return _topic; }
+
+void Channel::setTopic(const std::string& newTopic) { _topic = newTopic; }
+
 void Channel::addClient(Client* client) 
 {
     if (_clients.find(client->getNickname()) != _clients.end())

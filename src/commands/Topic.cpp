@@ -22,5 +22,34 @@ void Topic::execute(Client* client, std::string arguments)
     newTopic.erase(0, newTopic.find_first_not_of(" :"));
     std::cout << "Channel is: [" << channel << "]" << std::endl;
     std::cout << "new Topic is: [" << newTopic << "]" << std::endl;
-    (void)client;
+
+    Channel* channelTarget = client->searchChannel(channel);
+    if (channelTarget && newTopic.empty())
+    {
+        if (channelTarget->getTopic().empty())
+        {
+            client->reply(RPL_NOTOPIC(client->getNickname(), channel));
+            return ;
+        }
+        else
+        {
+            client->reply(RPL_TOPIC(client->getNickname(), channelTarget->getName(), channelTarget->getTopic()));
+            return ;
+        }
+    }
+    else if (channelTarget && !newTopic.empty())
+    {
+        if (!client->isOperator())
+        {
+            client->reply(ERR_CHANOPRIVSNEEDED(client->getNickname(), channel));
+            return ;
+        }
+        channelTarget->setTopic(newTopic);
+        return ;
+    }
+    else
+    {
+        client->reply(ERR_NOSUCHCHANNEL(client->getNickname(), channel));
+        return ;
+    }
 }
