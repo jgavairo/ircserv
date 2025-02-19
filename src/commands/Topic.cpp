@@ -20,8 +20,6 @@ void Topic::execute(Client* client, std::string arguments)
     std::getline(iss, newTopic);
 
     newTopic.erase(0, newTopic.find_first_not_of(" :"));
-    std::cout << "Channel is: [" << channel << "]" << std::endl;
-    std::cout << "new Topic is: [" << newTopic << "]" << std::endl;
 
     Channel* channelTarget = client->searchChannel(channel);
     if (channelTarget && newTopic.empty())
@@ -45,6 +43,7 @@ void Topic::execute(Client* client, std::string arguments)
             return ;
         }
         channelTarget->setTopic(newTopic);
+        client->reply(RPL_TOPIC(client->getNickname(), channelTarget->getName(), channelTarget->getTopic()));
         return ;
     }
     else

@@ -33,6 +33,14 @@ void Channel::addClient(Client* client)
 
 bool Channel::isEmpty() const { return _empty; }
 
+const std::vector<std::string> Channel::getNamesClients() const
+{
+    std::vector<std::string> list;
+    for (std::map<std::string, Client*>::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
+        list.push_back(it->first);
+    return list;
+}
+
 void Channel::broadcast(const std::string& message, Client* sender)
 {
     for (std::map<std::string, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it)

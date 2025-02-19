@@ -26,6 +26,7 @@ class Channel
 
         void updateNickname(const std::string& old_, const std::string& new_);
         void addClient(Client* client);
+        const std::vector<std::string> getNamesClients() const;
         void removeClient(Client* client);
         void displayClients() const;
         void broadcast(const std::string& message, Client* sender);

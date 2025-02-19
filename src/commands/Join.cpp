@@ -43,16 +43,32 @@ void Join::execute(Client* client, std::string arguments)
 
         channels[channelName]->addClient(client);
 
+        std::string namesList;
+        const std::vector<std::string>& clients = channels[channelName]->getNamesClients();
+        for (size_t i = 0; i < clients.size(); ++i) 
+        {
+            if (!namesList.empty()) 
+            {
+                namesList += " ";
+            }
+            namesList += clients[i];
+        }
 
         client->write(RPL_JOIN(client->getPrefix(), channelName));
         channels[channelName]->broadcast(RPL_JOIN(client->getPrefix(), channelName), client);
 
+        client->reply(RPL_NAMREPLY(client->getNickname(), channelName, namesList));
+        client->reply(RPL_ENDOFNAMES(client->getNickname(), channelName));
+        if (!channels[channelName]->getTopic().empty())
+            client->reply(RPL_TOPIC(client->getNickname(), channelName, channels[channelName]->getTopic()));
+        else
+            client->reply(RPL_NOTOPIC(client->getNickname(), channelName));
         std::cout << "Client " << client->getFd() << " joined channel: " << channelName << std::endl;
 
     }
     // /*---------------------------------------------------------------------------------------------------*/
     // //print list channels:
-    // /**/std::cout << "List of channels:\n" << std::endl;
+    // /**/std::cout << "List of channels server:\n" << std::endl;
     // /**/
     // /**/for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); ++it)
     // /**/    std::cout << "Channel name: " << it->first << std::endl;
