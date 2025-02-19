@@ -17,7 +17,7 @@ void Topic::execute(Client* client, std::string arguments)
     std::string channel, newTopic;
 
     iss >> channel;
-    getline(iss, newTopic);
+    std::getline(iss, newTopic);
 
     newTopic.erase(0, newTopic.find_first_not_of(" :"));
     std::cout << "Channel is: [" << channel << "]" << std::endl;

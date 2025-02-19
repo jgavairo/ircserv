@@ -156,7 +156,7 @@ void Server::handleCommands(Client* client, std::vector<std::string> commandLine
         iss >> commandName;
         if (_commandsList._list.find(commandName) != _commandsList._list.end())
         {
-            getline(iss, arguments);
+            std::getline(iss, arguments);
             _commandsList._list[commandName]->execute(client, arguments);
         }
     }

@@ -51,7 +51,7 @@ void Privmsg::execute(Client* client, std::string arguments)
         if (newArguments[0] == ':')
         {
             std::string result, tmp, noText;
-            getline(iss, tmp, '\0');
+            std::getline(iss, tmp, '\0');
             result = newArguments + tmp;
             
             //Si aucun message n'est present (donc rien a envoyer, une erreur se produit).
