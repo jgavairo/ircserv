@@ -7,32 +7,58 @@ class Client;
 
 class Channel
 {
-    private:
-        std::string _name;
-        std::string _password;
-        std::string _topic;
-        std::string _mode; // Ajout de l'attribut _mode
+private:
+    std::string _name;
+    std::string _password;
+    std::string _topic;
+    std::set<Client*> _whitelist;//Liste des clients autorisés
+    std::string _mode;//Mode du channel
+    bool _inviteOnly;//Mode +i
+    bool _topicRestricted;//Mode +t
+    std::set<std::string> _operators;//Liste des opérateurs
+    int _userLimit;//Limite d'utilisateur
+    std::set<std::string> _invitedClients; // Ajout de la liste des clients invités
+    bool    _empty;
+public:
+    std::map<std::string, Client*> _clients;
+    Channel(const std::string& name);
+    ~Channel();
 
-        bool    _empty;
-    public:
-        std::map<std::string, Client*> _clients;
-        Channel(const std::string& name);
-        ~Channel();
+    const std::string getName() const;
+    const std::string getTopic() const;
 
-        const std::string getName() const;
-        const std::string getTopic() const;
+    void setTopic(const std::string& newTopic);
+    bool isEmpty() const;
+    
+    void updateNickname(const std::string& old_, const std::string& new_);
+    void addClient(Client* client);
+    const std::vector<std::string> getNamesClients() const;
+    void removeClient(Client* client);
+    void displayClients() const;
+    void broadcast(const std::string& message, Client* sender);
 
-        bool isEmpty() const;
 
-        void updateNickname(const std::string& old_, const std::string& new_);
-        void addClient(Client* client);
-        const std::vector<std::string> getNamesClients() const;
-        void removeClient(Client* client);
-        void displayClients() const;
-        void broadcast(const std::string& message, Client* sender);
-        int  getNumberOfClients() const;
-        void setTopic(const std::string& newTopic);
+    // Méthodes pour gérer les modes
+    void setInviteOnly(bool inviteOnly);
+    bool isInviteOnly() const;
 
-        //void setMode(const std::string& mode); // Ajout de la méthode setMode
-        //bool isOperator(Client* client); // Ajout de la méthode isOperator
+    void setTopicRestricted(bool topicRestricted);
+    bool isTopicRestricted() const;
+
+    void setPassword(const std::string& password);
+    const std::string& getPassword() const;
+
+    void addOperator(const std::string& nickname);
+    void removeOperator(const std::string& nickname);
+    bool isOperator(Client* client) const;
+
+    void setUserLimit(int limit);
+    int getUserLimit() const;
+
+    // Nouvelle méthode pour définir un opérateur lors de la création du canal
+    void setInitialOperator(Client* client);
+
+    // Nouvelle méthode pour vérifier si un client est invité
+    bool isInvited(Client* client) const;
+    void inviteClient(const std::string& nickname);
 };

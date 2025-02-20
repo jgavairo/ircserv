@@ -54,5 +54,12 @@
 #define RPL_LIST(client, channel, users, topic) "322 " + client + " " + channel + " " + users + " :" + topic
 #define RPL_LISTEND(client) "323 " + client + " :End of /LIST"
 
+//FOR MODE
+#define ERR_UNKNOWNMODE(nick, mode) (":" + nick + " 472 " + mode + " :is unknown mode char to me")
+
+#define ERR_INVITEONLYCHAN(nick, channel) (":" + nick + " 473 " + channel + " :Cannot join channel (+i)")
+#define ERR_BADCHANNELKEY(nick, channel) (":" + nick + " 475 " + channel + " :Cannot join channel (+k)")
+#define ERR_CHANNELISFULL(nick, channel) (":" + nick + " 471 " + channel + " :Cannot join channel (+l)")
+
 
 #define MAX_CLIENTS 5

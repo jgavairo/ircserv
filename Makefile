@@ -20,7 +20,8 @@ SRCS = 	main.cpp Client.cpp Server.cpp Channel.cpp Parser.cpp \
 		commands/Topic.cpp \
 		commands/ACommand.cpp \
 		commands/CommandsList.cpp \
-		commands/Quit.cpp 
+		commands/Quit.cpp \
+		commands/Mode.cpp 
 OBJS = $(addprefix $(OBJDIR)/, $(SRCS:.cpp=.o))
 DEPS = $(addprefix $(DEPDIR)/, $(SRCS:.cpp=.d))
 

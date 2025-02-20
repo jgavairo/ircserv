@@ -87,3 +87,95 @@ void Channel::displayClients() const
     for (std::map<std::string, Client*>::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
         std::cout << it->first << " : " << it->second->getNickname() << std::endl;
 }
+
+
+// Implémentation des méthodes de gestion des modes
+void Channel::setInviteOnly(bool inviteOnly)
+{
+    _inviteOnly = inviteOnly;
+    if (inviteOnly)
+        std::cout << "[+i] Channel " << _name << " est que sur invitation." << std::endl;
+    else
+        std::cout << "[-i] Channel " << _name << " n'est plus sur invitation." << std::endl;
+}
+
+bool Channel::isInviteOnly() const
+{
+    return _inviteOnly;
+}
+
+void Channel::setTopicRestricted(bool topicRestricted)
+{
+    _topicRestricted = topicRestricted;
+    if (topicRestricted)
+        std::cout << "[+t] Channel " << _name << " is now topic restricted." << std::endl;
+    else
+        std::cout << "[-t] Channel " << _name << " is no longer topic restricted. " << std::endl;
+}
+
+bool Channel::isTopicRestricted() const
+{
+    return _topicRestricted;
+}
+
+void Channel::setPassword(const std::string& password)
+{
+    _password = password;
+    if (!password.empty())
+        std::cout << "[+k] Channel " << _name << " est proteger par le mot de passe : |"<< _password <<"|" << std::endl;
+    else
+        std::cout << "[-k] Channel " << _name << " n'est plus proteger par un mot de passe " << std::endl;
+}
+
+const std::string& Channel::getPassword() const
+{
+    return _password;
+}
+
+void Channel::addOperator(const std::string& nickname)
+{
+    _operators.insert(nickname);
+    std::cout << "[+o] Client " << nickname << " devient un operateur du channel " << _name << std::endl;
+}
+
+void Channel::removeOperator(const std::string& nickname)
+{
+    _operators.erase(nickname);
+    std::cout << "[-o] Client " << nickname << " nest plus operateur du channel " << _name << std::endl;
+}
+
+bool Channel::isOperator(Client* client) const
+{
+    return _operators.find(client->getNickname()) != _operators.end();
+}
+
+void Channel::setUserLimit(int limit)
+{
+    _userLimit = limit;
+    if (limit > 0)
+        std::cout << "[+l] Channel " << _name << " est limiter a " << limit << " users." << std::endl;
+    else
+        std::cout << "[-l] Channel " << _name << " na plus de limite dutilisateur" << std::endl;
+}
+
+int Channel::getUserLimit() const
+{
+    return _userLimit;
+}
+
+// Nouvelle méthode pour définir un opérateur lors de la création du canal
+void Channel::setInitialOperator(Client* client)
+{
+    _operators.insert(client->getNickname());
+}
+
+// Nouvelle méthode pour vérifier si un client est invité
+bool Channel::isInvited(Client* client) const
+{
+    return _invitedClients.find(client->getNickname()) != _invitedClients.end();//Verifie si le client est dans la liste des clients invités
+}
+
+void Channel::inviteClient(const std::string& nickname)
+{
+    _invitedClients.insert(nickname);
+}

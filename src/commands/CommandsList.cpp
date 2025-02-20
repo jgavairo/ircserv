@@ -10,7 +10,7 @@
 #include "../../inc/commands/Topic.hpp"
 #include "../../inc/commands/Invite.hpp"
 #include "../../inc/commands/Part.hpp"
-//#include "../../inc/commands/Mode.hpp"
+#include "../../inc/commands/Mode.hpp"
 
 CommandsList::CommandsList()
 {
@@ -25,7 +25,7 @@ CommandsList::CommandsList()
     _list["PART"] = new Part();
     _list["INVITE"] = new Invite();
     _list["LIST"] = new Invite();
-    //_list["MODE"] = new Mode();
+    _list["MODE"] = new Mode();
 
     //ADD ALL COMMANDES
 }
