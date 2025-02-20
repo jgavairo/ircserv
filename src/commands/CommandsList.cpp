@@ -6,6 +6,7 @@
 #include "../../inc/commands/Notice.hpp"
 #include "../../inc/commands/Pass.hpp"
 #include "../../inc/commands/Quit.hpp"
+#include "../../inc/commands/List.hpp"
 #include "../../inc/commands/Topic.hpp"
 #include "../../inc/commands/Invite.hpp"
 #include "../../inc/commands/Part.hpp"
@@ -23,6 +24,7 @@ CommandsList::CommandsList()
     _list["TOPIC"] = new Topic();
     _list["PART"] = new Part();
     _list["INVITE"] = new Invite();
+    _list["LIST"] = new Invite();
     //_list["MODE"] = new Mode();
 
     //ADD ALL COMMANDES

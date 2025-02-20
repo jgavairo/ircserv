@@ -13,6 +13,11 @@ void Invite::execute(Client* client, std::string arguments)
     iss >> nickname;
     iss >> channel;
 
+    if (client->getState() == NOT_REGISTERED)
+    {
+        client->reply(ERR_NOTREGISTERED());
+        return;
+    }
     if (!client->isOperator())
     {
         client->reply(ERR_CHANOPRIVSNEEDED(client->getNickname(), channel));

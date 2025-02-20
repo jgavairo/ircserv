@@ -30,7 +30,7 @@ class Channel
         void removeClient(Client* client);
         void displayClients() const;
         void broadcast(const std::string& message, Client* sender);
-
+        int  getNumberOfClients() const;
         void setTopic(const std::string& newTopic);
 
         //void setMode(const std::string& mode); // Ajout de la méthode setMode

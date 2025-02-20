@@ -16,11 +16,25 @@ void Join::execute(Client* client, std::string arguments)
     }
     //Split des noms de channels par virgule (RFC 1459)
     std::istringstream iss(arguments);
-    std::string channelName;
+    std::string channelName, keysList;
+    iss >> channelName;
+    iss >> keysList;
+    std::istringstream iss2(channelName);
+    std::istringstream iss3(keysList);
+    // std::cout << "channels: " << channelName << std::endl;
+    // std::cout << "Keys: " << keysList << std::endl;
+
     Server* server = Server::getInstance();
     std::map<std::string, Channel*>& channels = server->getChannels();
+    std::vector<std::string> keys;
+    while (std::getline(iss3, keysList, ','))
+    {
+        keysList.erase(0, keysList.find_first_not_of(" \t"));
+        keysList.erase(keysList.find_last_not_of(" \t") + 1);
+        keys.push_back(keysList);
+    }
 
-    while (std::getline(iss, channelName, ','))
+    while (std::getline(iss2, channelName, ','))
     {
         //Supprimer les espaces éventuels autour du nom du canal
         channelName.erase(0, channelName.find_first_not_of(" \t"));
@@ -41,6 +55,7 @@ void Join::execute(Client* client, std::string arguments)
         if (channels.find(channelName) == channels.end())
             channels[channelName] = new Channel(channelName);
 
+        //verifier si il necessite un mdp, si oui aller checker a lindex associe dans keys
         channels[channelName]->addClient(client);
 
         std::string namesList;
@@ -66,6 +81,7 @@ void Join::execute(Client* client, std::string arguments)
         std::cout << "Client " << client->getFd() << " joined channel: " << channelName << std::endl;
 
     }
+
     // /*---------------------------------------------------------------------------------------------------*/
     // //print list channels:
     // /**/std::cout << "List of channels server:\n" << std::endl;

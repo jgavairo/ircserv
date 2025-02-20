@@ -50,5 +50,9 @@
 
 #define RPL_INVITING(nickname, channel, inviter) "341 " + nickname + " " + channel + " " + inviter
 
+#define RPL_LISTSTART(client) "321 " + client + " Channel :Users Name"
+#define RPL_LIST(client, channel, users, topic) "322 " + client + " " + channel + " " + users + " :" + topic
+#define RPL_LISTEND(client) "323 " + client + " :End of /LIST"
+
 
 #define MAX_CLIENTS 5

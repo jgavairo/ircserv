@@ -8,6 +8,11 @@ Topic::~Topic() {}
 
 void Topic::execute(Client* client, std::string arguments)
 {
+    if (client->getState() == NOT_REGISTERED)
+    {
+        client->reply(ERR_NOTREGISTERED());
+        return;
+    }
     if (arguments.empty())
     {
         client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "TOPIC"));

@@ -8,21 +8,19 @@ Quit::~Quit() {}
 
 void Quit::execute(Client* client, std::string arguments)
 {
+    if (client->getState() == NOT_REGISTERED)
+    {
+        client->reply(ERR_NOTREGISTERED());
+        return;
+    }
+    
     std::string quitMessage = "Client has quit";
-
     if (!arguments.empty())
     {
         if (arguments[0] == ':')
             arguments.erase(0, 1);
         quitMessage = arguments;
     }
-
-    // if (client->getState() != REGISTERED)
-    // {
-    //     client->reply(ERR_NOTREGISTERED());
-    //     return;
-    // }
-
     Server* server = Server::getInstance();
     std::map<std::string, Channel*> channels = server->getChannels();
 

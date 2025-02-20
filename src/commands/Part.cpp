@@ -8,6 +8,11 @@ Part::~Part() {}
 
 void Part::execute(Client* client, std::string arguments)
 {
+    if (client->getState() == NOT_REGISTERED)
+    {
+        client->reply(ERR_NOTREGISTERED());
+        return;
+    }
     Server* server = Server::getInstance();
     std::map<std::string, Channel*>& channels = server->getChannels();
 

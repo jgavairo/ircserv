@@ -9,6 +9,7 @@ tmpObj/commands/CommandsList.o: src/commands/CommandsList.cpp \
   src/commands/../../inc/commands/Notice.hpp \
   src/commands/../../inc/commands/Pass.hpp \
   src/commands/../../inc/commands/Quit.hpp \
+  src/commands/../../inc/commands/List.hpp \
   src/commands/../../inc/commands/Topic.hpp \
   src/commands/../../inc/commands/Invite.hpp \
   src/commands/../../inc/commands/Part.hpp
@@ -34,6 +35,8 @@ src/commands/../../inc/commands/Notice.hpp:
 src/commands/../../inc/commands/Pass.hpp:
 
 src/commands/../../inc/commands/Quit.hpp:
+
+src/commands/../../inc/commands/List.hpp:
 
 src/commands/../../inc/commands/Topic.hpp:
 
