@@ -43,6 +43,8 @@
 #define RPL_JOIN(prefix, channel) ":" + prefix + " JOIN :" + channel
 #define RPL_WELCOME(client) "001 " + client + " :Welcome to the Internet Relay Network ft_irc " + client
 
+#define PART_MESSAGE(clientPrefix, channel, reason) ":" + clientPrefix + " PART " + channel + (reason.empty() ? "" : " :" + reason)
+
 #define RPL_NAMREPLY(client, channel, namesList) "353 " + client + " = " + channel + " :" + namesList
 #define RPL_ENDOFNAMES(client, channel) "366 " + client + " " + channel + " :End of /NAMES list."
 
