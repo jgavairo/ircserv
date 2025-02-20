@@ -17,13 +17,18 @@ void Part::execute(Client* client, std::string arguments)
     size_t pos = arguments.find(':');
     if (pos != std::string::npos)
     {
-        channelName = arguments.substr(0, pos - 1);
         partMessage = arguments.substr(pos, arguments.size());
         partMessage.erase(0, channelName.find_first_not_of(" :"));
     }
+    channelName = arguments.substr(0, pos - 1);
     std::istringstream iss(channelName);
     std::cout << "channelName: " << channelName << std::endl;
     
+    if (channelName.empty())
+    {
+        client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), std::string("JOIN")));
+        return;
+    }
 
     while (std::getline(iss, channelName, ','))
     {

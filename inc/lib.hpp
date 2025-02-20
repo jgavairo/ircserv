@@ -48,4 +48,7 @@
 #define RPL_NAMREPLY(client, channel, namesList) "353 " + client + " = " + channel + " :" + namesList
 #define RPL_ENDOFNAMES(client, channel) "366 " + client + " " + channel + " :End of /NAMES list."
 
+#define RPL_INVITING(nickname, channel, inviter) "341 " + nickname + " " + channel + " " + inviter
+
+
 #define MAX_CLIENTS 5
