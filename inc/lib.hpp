@@ -56,6 +56,7 @@
 #define ERR_USERNOTINCHANNEL(client, user, channel) "441 " + client + " " + user + " " + channel + " :They aren't on that channel"
 
 //FOR MODE
+#define RPL_CHANNELMODEIS(nickname, channel, modes) "324 " + nickname + " " + channel + " " + modes
 #define ERR_UNKNOWNMODE(nick, mode) (":" + nick + " 472 " + mode + " :is unknown mode char to me")
 #define RPL_KICK(kicker, channel, user, comment) ":" + kicker + " KICK " + channel + " " + user + " :" + comment
 

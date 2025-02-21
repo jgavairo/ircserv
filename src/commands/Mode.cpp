@@ -17,7 +17,7 @@ void Mode::execute(Client* client, std::string arguments)
     std::string channelName, mode, param;
     iss >> channelName >> mode >> param;
 
-    if (channelName.empty() || mode.empty())//channelName ou mode est vide
+    if (channelName.empty())//channelName ou mode est vide
     {
         client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "MODE"));
         return;
@@ -38,28 +38,33 @@ void Mode::execute(Client* client, std::string arguments)
         client->reply(ERR_CHANOPRIVSNEEDED(client->getNickname(), channelName));
         return;
     }
-
-   
+    // Si aucun mode n'est spécifié, retourner les modes actuels du canal
+    if (mode.empty())
+    {
+        std::string currentModes = channel->getAllModes();
+        client->reply(RPL_CHANNELMODEIS(client->getNickname(), channelName, currentModes));
+        return;
+    }
     // Appliquer les changements de mode au canal
     if (mode == "+i")//channel sur invitation uniquement
     {
         channel->setInviteOnly(true);
-        channel->broadcast(NOTICE_INVITE_ONLY_SET(client->getNickname(), channelName), client);
+        channel->broadcast(NOTICE_INVITE_ONLY_SET(client->getNickname(), channelName), NULL);
     }
     else if (mode == "-i")
     {
         channel->setInviteOnly(false);
-        channel->broadcast(NOTICE_INVITE_ONLY_UNSET(client->getNickname(), channelName), client);
+        channel->broadcast(NOTICE_INVITE_ONLY_UNSET(client->getNickname(), channelName), NULL);
     }
     else if (mode == "+t")
     {
         channel->setTopicRestricted(true);
-        channel->broadcast(NOTICE_TOPIC_RESTRICTED_SET(client->getNickname(), channelName), client);
+        channel->broadcast(NOTICE_TOPIC_RESTRICTED_SET(client->getNickname(), channelName), NULL);
     }
     else if (mode == "-t")
     {
         channel->setTopicRestricted(false);
-        channel->broadcast(NOTICE_TOPIC_RESTRICTED_UNSET(client->getNickname(), channelName), client);
+        channel->broadcast(NOTICE_TOPIC_RESTRICTED_UNSET(client->getNickname(), channelName), NULL);
     }
     else if (mode == "+k")//check les cas a gerer en bas
     {
@@ -74,22 +79,22 @@ void Mode::execute(Client* client, std::string arguments)
             return;
         }
         channel->setPassword(param);
-        channel->broadcast(NOTICE_PASSWORD_SET(client->getNickname(), channelName), client);
+        channel->broadcast(NOTICE_PASSWORD_SET(client->getNickname(), channelName), NULL);
     }
     else if (mode == "-k")
     {
         channel->setPassword("");
-        channel->broadcast(NOTICE_PASSWORD_UNSET(client->getNickname(), channelName), client);
+        channel->broadcast(NOTICE_PASSWORD_UNSET(client->getNickname(), channelName), NULL);
     }
     else if (mode == "+o")
     {
         channel->addOperator(param);
-        channel->broadcast(NOTICE_OPERATOR_ADDED(client->getNickname(), channelName, param), client);
+        channel->broadcast(NOTICE_OPERATOR_ADDED(client->getNickname(), channelName, param), NULL);
     }
     else if (mode == "-o")
     {
         channel->removeOperator(param);
-        channel->broadcast(NOTICE_OPERATOR_REMOVED(client->getNickname(), channelName, param), client);
+        channel->broadcast(NOTICE_OPERATOR_REMOVED(client->getNickname(), channelName, param), NULL);
     }
     else if (mode == "+l")
     {
@@ -105,7 +110,7 @@ void Mode::execute(Client* client, std::string arguments)
     else if (mode == "-l")
     {
         channel->setUserLimit(0);
-        channel->broadcast(NOTICE_USER_LIMIT_UNSET(client->getNickname(), channelName), client);
+        channel->broadcast(NOTICE_USER_LIMIT_UNSET(client->getNickname(), channelName), NULL);
     }
     else
     {

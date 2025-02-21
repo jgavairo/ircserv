@@ -12,6 +12,7 @@ private:
     std::string _password;
     std::string _topic;
     std::string _mode;//Mode du channel
+    std::string _allModes;//Tous les modes du channel
     std::set<std::string> _operators;//Liste des opérateurs
     std::set<std::string> _invitedClients; // Ajout de la liste des clients invités
     bool    _inviteOnly;//Mode +i
@@ -39,6 +40,8 @@ public:
 
 
     // Méthodes pour gérer les modes
+    std::string getAllModes() const;
+
     void setInviteOnly(bool inviteOnly);
     bool isInviteOnly() const;
 

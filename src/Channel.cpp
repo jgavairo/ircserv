@@ -93,10 +93,16 @@ void Channel::displayClients() const
 void Channel::setInviteOnly(bool inviteOnly)
 {
     _inviteOnly = inviteOnly;
+
     if (inviteOnly)
+    {
         std::cout << "[+i] Channel " << _name << " est que sur invitation." << std::endl;
-    else
+        _allModes += "i";
+    }
+    else{
         std::cout << "[-i] Channel " << _name << " n'est plus sur invitation." << std::endl;
+        _allModes.erase(_allModes.find("i"), 1);
+    }
 }
 
 bool Channel::isInviteOnly() const
@@ -107,10 +113,14 @@ bool Channel::isInviteOnly() const
 void Channel::setTopicRestricted(bool topicRestricted)
 {
     _topicRestricted = topicRestricted;
-    if (topicRestricted)
+    if (topicRestricted){
         std::cout << "[+t] Channel " << _name << " is now topic restricted." << std::endl;
-    else
+        _allModes += "t";
+    }
+    else{
         std::cout << "[-t] Channel " << _name << " is no longer topic restricted. " << std::endl;
+        _allModes.erase(_allModes.find("t"), 1);
+    }
 }
 
 bool Channel::isTopicRestricted() const
@@ -122,10 +132,14 @@ void Channel::setPassword(const std::string& password)
 {
     if (password[0] != '#')
         _password = password;
-    if (!password.empty())
+    if (!password.empty()){
         std::cout << "[+k] Channel " << _name << " est proteger par le mot de passe : |"<< _password <<"|" << std::endl;
-    else
+        _allModes += "k";
+    }
+    else{
         std::cout << "[-k] Channel " << _name << " n'est plus proteger par un mot de passe " << std::endl;
+        _allModes.erase(_allModes.find("k"), 1);
+    }
 }
 
 const std::string& Channel::getPassword() const
@@ -153,10 +167,15 @@ bool Channel::isOperator(Client* client) const
 void Channel::setUserLimit(int limit)
 {
     _userLimit = limit;
-    if (limit > 0)
+    if (limit > 0){
         std::cout << "[+l] Channel " << _name << " est limiter a " << limit << " users." << std::endl;
-    else
+        _allModes += "l";
+    }
+    else{
+        _allModes.erase(_allModes.find("l"), 1);
         std::cout << "[-l] Channel " << _name << " na plus de limite dutilisateur" << std::endl;
+
+    }
 }
 
 size_t Channel::getUserLimit() const
@@ -167,6 +186,11 @@ size_t Channel::getUserLimit() const
 size_t Channel::getUserCount() const
 {
     return _clients.size();
+}
+
+std::string Channel::getAllModes() const
+{
+    return _allModes;
 }
 
 // Nouvelle méthode pour définir un opérateur lors de la création du canal
