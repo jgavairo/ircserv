@@ -11,7 +11,6 @@ private:
     std::string _name;
     std::string _password;
     std::string _topic;
-    std::set<Client*> _whitelist;//Liste des clients autorisés
     std::string _mode;//Mode du channel
     std::set<std::string> _operators;//Liste des opérateurs
     std::set<std::string> _invitedClients; // Ajout de la liste des clients invités

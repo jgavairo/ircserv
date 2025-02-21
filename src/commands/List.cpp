@@ -13,5 +13,7 @@ void List::execute(Client* client, std::string arguments)
         client->reply(ERR_NOTREGISTERED());
         return ;
     }
+    (void) arguments;
+    
 
 }
