@@ -164,6 +164,11 @@ bool Channel::isOperator(Client* client) const
     return _operators.find(client->getNickname()) != _operators.end();
 }
 
+bool Channel::isOperatorByName(std::string client) const
+{
+    return _operators.find(client) != _operators.end();
+}
+
 void Channel::setUserLimit(int limit)
 {
     _userLimit = limit;

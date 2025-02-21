@@ -26,7 +26,7 @@ CommandsList::CommandsList()
     _list["PART"] = new Part();
     _list["KICK"] = new Kick();
     _list["INVITE"] = new Invite();
-    _list["LIST"] = new Invite();
+    _list["LIST"] = new List();
     _list["MODE"] = new Mode();
 }
 
