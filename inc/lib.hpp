@@ -53,9 +53,11 @@
 #define RPL_LISTSTART(client) "321 " + client + " Channel :Users Name"
 #define RPL_LIST(client, channel, users, topic) "322 " + client + " " + channel + " " + users + " :" + topic
 #define RPL_LISTEND(client) "323 " + client + " :End of /LIST"
+#define ERR_USERNOTINCHANNEL(client, user, channel) "441 " + client + " " + user + " " + channel + " :They aren't on that channel"
 
 //FOR MODE
 #define ERR_UNKNOWNMODE(nick, mode) (":" + nick + " 472 " + mode + " :is unknown mode char to me")
+#define RPL_KICK(kicker, channel, user, comment) ":" + kicker + " KICK " + channel + " " + user + " :" + comment
 
 #define ERR_INVITEONLYCHAN(nick, channel) (":" + nick + " 473 " + channel + " :Cannot join channel (+i)")
 #define ERR_BADCHANNELKEY(nick, channel) (":" + nick + " 475 " + channel + " :Cannot join channel (+k)")

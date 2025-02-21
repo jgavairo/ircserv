@@ -8,26 +8,21 @@ Join::~Join() {}
 
 void Join::execute(Client* client, std::string arguments)
 {
-    //Verification des droits (client authentifie)
     if (client->getState() != REGISTERED)
     {
         client->reply(ERR_NOTREGISTERED());
         return ;
     }
-    //Split des noms de channels par virgule (RFC 1459)
     std::istringstream iss(arguments);
     std::string channelName, keysList;
     iss >> channelName;
     iss >> keysList;
-    std::istringstream iss2(channelName);
-    std::istringstream iss3(keysList);
+    std::istringstream iss2(channelName), iss3(keysList);
     size_t indexKey = 0;
-    // std::cout << "channels: " << channelName << std::endl;
-    // std::cout << "Keys: " << keysList << std::endl;
-
     Server* server = Server::getInstance();
     std::map<std::string, Channel*>& channels = server->getChannels();
     std::vector<std::string> keys;
+
     while (std::getline(iss3, keysList, ','))
     {
         keysList.erase(0, keysList.find_first_not_of(" \t"));
@@ -37,7 +32,6 @@ void Join::execute(Client* client, std::string arguments)
 
     while (std::getline(iss2, channelName, ','))
     {
-        //Supprimer les espaces éventuels autour du nom du canal
         channelName.erase(0, channelName.find_first_not_of(" \t"));
         channelName.erase(channelName.find_last_not_of(" \t") + 1);
 
@@ -58,16 +52,19 @@ void Join::execute(Client* client, std::string arguments)
             channels[channelName] = new Channel(channelName);
             channels[channelName]->setInitialOperator(client); // Définir le créateur du canal comme opérateur
         }
+
         if (channels[channelName]->getUserLimit() > 0 && (channels[channelName]->_clients.size()) >= channels[channelName]->getUserLimit())
         {
             client->reply(ERR_CHANNELISFULL(client->getNickname(), channelName));
             return;
         }
+
         if (channels[channelName]->isInviteOnly() && !channels[channelName]->isInvited(client))
         {
             client->reply(ERR_INVITEONLYCHAN(client->getNickname(), channelName));
             return;
         }
+        
         if (channels[channelName]->isInvited(client) || channels[channelName]->getPassword().empty())
             channels[channelName]->addClient(client);
         else if (!channels[channelName]->getPassword().empty())
