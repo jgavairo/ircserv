@@ -64,14 +64,13 @@ void Join::execute(Client* client, std::string arguments)
             client->reply(ERR_INVITEONLYCHAN(client->getNickname(), channelName));
             return;
         }
-        
+
         if (channels[channelName]->isInvited(client) || channels[channelName]->getPassword().empty())
             channels[channelName]->addClient(client);
         else if (!channels[channelName]->getPassword().empty())
         {
             if (keys.empty() || (indexKey < keys.size() && keys[indexKey] != channels[channelName]->getPassword()))
             {
-                std::cout << "DEBUG LOGS >>>>>>>>>>>>>>>>>>>>>>>>" << std::endl;
                 client->reply(ERR_BADCHANNELKEY(client->getNickname(), channelName));
                 indexKey++;
                 continue;
@@ -89,7 +88,10 @@ void Join::execute(Client* client, std::string arguments)
             {
                 namesList += " ";
             }
-            namesList += clients[i];
+            if (channels[channelName]->isOperatorByName(clients[i]))
+                namesList += "@" + clients[i];
+            else
+                namesList += clients[i];
         }
 
         client->write(RPL_JOIN(client->getPrefix(), channelName));

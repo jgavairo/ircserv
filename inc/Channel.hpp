@@ -50,6 +50,7 @@ public:
     void addOperator(const std::string& nickname);
     void removeOperator(const std::string& nickname);
     bool isOperator(Client* client) const;
+    bool isOperatorByName(std::string client) const;
 
     void    setUserLimit(int limit);
     size_t  getUserLimit() const;
