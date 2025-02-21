@@ -60,6 +60,19 @@
 #define ERR_INVITEONLYCHAN(nick, channel) (":" + nick + " 473 " + channel + " :Cannot join channel (+i)")
 #define ERR_BADCHANNELKEY(nick, channel) (":" + nick + " 475 " + channel + " :Cannot join channel (+k)")
 #define ERR_CHANNELISFULL(nick, channel) (":" + nick + " 471 " + channel + " :Cannot join channel (+l)")
+#define ERR_CANNOTSETLIMIT(nick, channel) (":" + nick + " 471 " + channel + " :Cannot set limit lower than current users")
 
+
+// Définition des messages de broadcast
+#define NOTICE_INVITE_ONLY_SET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode +i has been set")
+#define NOTICE_INVITE_ONLY_UNSET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode -i has been unset")
+#define NOTICE_TOPIC_RESTRICTED_SET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode +t has been set")
+#define NOTICE_TOPIC_RESTRICTED_UNSET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode -t has been unset")
+#define NOTICE_PASSWORD_SET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode +k has been set")
+#define NOTICE_PASSWORD_UNSET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode -k has been unset")
+#define NOTICE_OPERATOR_ADDED(prefix, channel, param) (":" + prefix + " NOTICE " + channel + " :Mode +o " + param + " has been set")
+#define NOTICE_OPERATOR_REMOVED(prefix, channel, param) (":" + prefix + " NOTICE " + channel + " :Mode -o " + param + " has been unset")
+#define NOTICE_USER_LIMIT_SET(prefix, channel, param) (":" + prefix + " NOTICE " + channel + " :Mode +l " + param + " has been set")
+#define NOTICE_USER_LIMIT_UNSET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode -l has been unset")
 
 #define MAX_CLIENTS 5

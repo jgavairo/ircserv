@@ -11,7 +11,6 @@ private:
     std::string _name;
     std::string _password;
     std::string _topic;
-    std::set<Client*> _whitelist;//Liste des clients autorisés
     std::string _mode;//Mode du channel
     std::set<std::string> _operators;//Liste des opérateurs
     std::set<std::string> _invitedClients; // Ajout de la liste des clients invités
@@ -54,6 +53,7 @@ public:
 
     void    setUserLimit(int limit);
     size_t  getUserLimit() const;
+    size_t  getUserCount() const;
 
     // Nouvelle méthode pour définir un opérateur lors de la création du canal
     void setInitialOperator(Client* client);
@@ -61,4 +61,5 @@ public:
     // Nouvelle méthode pour vérifier si un client est invité
     bool isInvited(Client* client) const;
     void inviteClient(const std::string& nickname);
+
 };

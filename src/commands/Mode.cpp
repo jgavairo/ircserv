@@ -39,27 +39,74 @@ void Mode::execute(Client* client, std::string arguments)
         return;
     }
 
+   
     // Appliquer les changements de mode au canal
     if (mode == "+i")//channel sur invitation uniquement
+    {
         channel->setInviteOnly(true);
+        channel->broadcast(NOTICE_INVITE_ONLY_SET(client->getNickname(), channelName), client);
+    }
     else if (mode == "-i")
+    {
         channel->setInviteOnly(false);
+        channel->broadcast(NOTICE_INVITE_ONLY_UNSET(client->getNickname(), channelName), client);
+    }
     else if (mode == "+t")
+    {
         channel->setTopicRestricted(true);
+        channel->broadcast(NOTICE_TOPIC_RESTRICTED_SET(client->getNickname(), channelName), client);
+    }
     else if (mode == "-t")
+    {
         channel->setTopicRestricted(false);
+        channel->broadcast(NOTICE_TOPIC_RESTRICTED_UNSET(client->getNickname(), channelName), client);
+    }
     else if (mode == "+k")//check les cas a gerer en bas
+    {
+        if (param.empty()) // Vérifier si le mot de passe est vide
+        {
+            client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), mode));
+            return;
+        }
+        if (param[0] == '#')
+        {
+            client->reply(ERR_PASSWDMISMATCH(client->getNickname()));
+            return;
+        }
         channel->setPassword(param);
+        channel->broadcast(NOTICE_PASSWORD_SET(client->getNickname(), channelName), client);
+    }
     else if (mode == "-k")
+    {
         channel->setPassword("");
+        channel->broadcast(NOTICE_PASSWORD_UNSET(client->getNickname(), channelName), client);
+    }
     else if (mode == "+o")
+    {
         channel->addOperator(param);
+        channel->broadcast(NOTICE_OPERATOR_ADDED(client->getNickname(), channelName, param), client);
+    }
     else if (mode == "-o")
+    {
         channel->removeOperator(param);
+        channel->broadcast(NOTICE_OPERATOR_REMOVED(client->getNickname(), channelName, param), client);
+    }
     else if (mode == "+l")
-        channel->setUserLimit(std::atoi(param.c_str()));
+    {
+        size_t newLimit = std::atoi(param.c_str());
+        if (newLimit < channel->getUserCount()) // Vérifier si la nouvelle limite est inférieure au nombre actuel d'utilisateurs
+        {
+            client->reply(ERR_CANNOTSETLIMIT(client->getNickname(), channelName));
+            return;
+        }
+        channel->setUserLimit(newLimit);
+        channel->broadcast(NOTICE_USER_LIMIT_SET(client->getNickname(), channelName, param), NULL);
+    }
     else if (mode == "-l")
+    {
         channel->setUserLimit(0);
+        channel->broadcast(NOTICE_USER_LIMIT_UNSET(client->getNickname(), channelName), client);
+    }
     else
     {
         client->reply(ERR_UNKNOWNMODE(client->getNickname(), mode));

@@ -120,7 +120,8 @@ bool Channel::isTopicRestricted() const
 
 void Channel::setPassword(const std::string& password)
 {
-    _password = password;
+    if (password[0] != '#')
+        _password = password;
     if (!password.empty())
         std::cout << "[+k] Channel " << _name << " est proteger par le mot de passe : |"<< _password <<"|" << std::endl;
     else
@@ -161,6 +162,11 @@ void Channel::setUserLimit(int limit)
 size_t Channel::getUserLimit() const
 {
     return _userLimit;
+}
+
+size_t Channel::getUserCount() const
+{
+    return _clients.size();
 }
 
 // Nouvelle méthode pour définir un opérateur lors de la création du canal
