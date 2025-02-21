@@ -18,11 +18,6 @@ void Invite::execute(Client* client, std::string arguments)
         client->reply(ERR_NOTREGISTERED());
         return;
     }
-    if (!client->isOperator())
-    {
-        client->reply(ERR_CHANOPRIVSNEEDED(client->getNickname(), channel));
-        return ;
-    }
     if (nickname.empty() || channel.empty())
     {
         client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "INVITE"));
@@ -36,7 +31,13 @@ void Invite::execute(Client* client, std::string arguments)
         {
             if (client->searchChannel(channel))
             {
+                if (!client->searchChannel(channel)->isOperator(client))
+                {
+                    client->reply(ERR_CHANOPRIVSNEEDED(client->getNickname(), channel));
+                    return ;
+                }
                 it->second->reply(RPL_INVITING(nickname, channel, client->getNickname()));
+                return ;
             }
             else
             {

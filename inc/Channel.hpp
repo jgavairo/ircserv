@@ -13,11 +13,11 @@ private:
     std::string _topic;
     std::set<Client*> _whitelist;//Liste des clients autorisés
     std::string _mode;//Mode du channel
-    bool _inviteOnly;//Mode +i
-    bool _topicRestricted;//Mode +t
     std::set<std::string> _operators;//Liste des opérateurs
-    int _userLimit;//Limite d'utilisateur
     std::set<std::string> _invitedClients; // Ajout de la liste des clients invités
+    bool    _inviteOnly;//Mode +i
+    bool    _topicRestricted;//Mode +t
+    size_t  _userLimit;//Limite d'utilisateur
     bool    _empty;
 public:
     std::map<std::string, Client*> _clients;
@@ -26,6 +26,7 @@ public:
 
     const std::string getName() const;
     const std::string getTopic() const;
+    const std::string& getPassword() const;
 
     void setTopic(const std::string& newTopic);
     bool isEmpty() const;
@@ -46,14 +47,13 @@ public:
     bool isTopicRestricted() const;
 
     void setPassword(const std::string& password);
-    const std::string& getPassword() const;
 
     void addOperator(const std::string& nickname);
     void removeOperator(const std::string& nickname);
     bool isOperator(Client* client) const;
 
-    void setUserLimit(int limit);
-    int getUserLimit() const;
+    void    setUserLimit(int limit);
+    size_t  getUserLimit() const;
 
     // Nouvelle méthode pour définir un opérateur lors de la création du canal
     void setInitialOperator(Client* client);

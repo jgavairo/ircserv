@@ -158,7 +158,7 @@ void Channel::setUserLimit(int limit)
         std::cout << "[-l] Channel " << _name << " na plus de limite dutilisateur" << std::endl;
 }
 
-int Channel::getUserLimit() const
+size_t Channel::getUserLimit() const
 {
     return _userLimit;
 }
