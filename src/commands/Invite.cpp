@@ -36,6 +36,7 @@ void Invite::execute(Client* client, std::string arguments)
                     client->reply(ERR_CHANOPRIVSNEEDED(client->getNickname(), channel));
                     return ;
                 }
+                client->searchChannel(channel)->inviteClient(nickname);
                 it->second->reply(RPL_INVITING(nickname, channel, client->getNickname()));
                 return ;
             }

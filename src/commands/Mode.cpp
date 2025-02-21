@@ -33,16 +33,16 @@ void Mode::execute(Client* client, std::string arguments)
     }
 
     Channel* channel = channels[channelName];//recuperer le channel
-    if (!channel->isOperator(client))//Arret si le client n'est pas operateur
-    {
-        client->reply(ERR_CHANOPRIVSNEEDED(client->getNickname(), channelName));
-        return;
-    }
     // Si aucun mode n'est spécifié, retourner les modes actuels du canal
     if (mode.empty())
     {
         std::string currentModes = channel->getAllModes();
         client->reply(RPL_CHANNELMODEIS(client->getNickname(), channelName, currentModes));
+        return;
+    }
+    if (!channel->isOperator(client))//Arret si le client n'est pas operateur
+    {
+        client->reply(ERR_CHANOPRIVSNEEDED(client->getNickname(), channelName));
         return;
     }
     // Appliquer les changements de mode au canal
