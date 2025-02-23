@@ -3,16 +3,6 @@
 
 Server* Server::_instance = NULL;
 
-void Server::createBotClient() // BONUS
-{
-    int bot_socket = socket(AF_INET, SOCK_NONBLOCK, 0);
-    if (bot_socket < 0)
-    {
-        std::cerr << "Error: failed creation of bot socket." << std::endl;
-        return ;
-    }
-}
-
 Server::Server(int argc, char**argv)
 {
     initialisation(argc, argv);

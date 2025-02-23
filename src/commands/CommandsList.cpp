@@ -11,6 +11,7 @@
 #include "../../inc/commands/Topic.hpp"
 #include "../../inc/commands/Invite.hpp"
 #include "../../inc/commands/Part.hpp"
+#include "../../inc/commands/AddBot.hpp"
 #include "../../inc/commands/Mode.hpp"
 
 CommandsList::CommandsList()
@@ -19,6 +20,7 @@ CommandsList::CommandsList()
     _list["USER"] = new User();
     _list["JOIN"] = new Join();
     _list["PRIVMSG"] = new Privmsg();
+    _list["ADDBOT"] = new AddBot();
     _list["NOTICE"] = new Notice();
     _list["PASS"] = new Pass();
     _list["QUIT"] = new Quit();

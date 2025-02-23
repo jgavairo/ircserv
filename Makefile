@@ -13,6 +13,7 @@ SRCS = 	main.cpp Client.cpp Server.cpp Channel.cpp Parser.cpp \
 		commands/User.cpp \
 		commands/Join.cpp \
 		commands/Privmsg.cpp \
+		commands/AddBot.cpp \
 		commands/Pass.cpp \
 		commands/Part.cpp \
 		commands/Invite.cpp \

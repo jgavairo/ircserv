@@ -23,8 +23,7 @@ class Server
         std::vector<pollfd> _fds;
         std::map<int, Client*> _clients;
         std::map<std::string, Channel*> _channels;
-        
-        void createBotClient(); // BONUS
+
         void initialisation(int argc, char** argv);
         int addNewClient();
         void receiveNewSignal(size_t& i);

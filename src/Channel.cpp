@@ -28,7 +28,7 @@ void Channel::addClient(Client* client)
 {
     if (_clients.find(client->getNickname()) != _clients.end())
     {
-        std::cerr << "ERROR: this client is already present in this channel." << std::endl;
+        client->userReply("NOTICE: this client is already present in this channel.");
         return;
     }
     if (client->_channels.find(this->_name) != client->_channels.end())
