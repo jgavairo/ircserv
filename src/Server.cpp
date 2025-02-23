@@ -3,14 +3,59 @@
 
 Server* Server::_instance = NULL;
 
+void Server::createBotClient() // BONUS
+{
+    int bot_socket = socket(AF_INET, SOCK_NONBLOCK, 0);
+    if (bot_socket < 0)
+    {
+        std::cerr << "Error: failed creation of bot socket." << std::endl;
+        return ;
+    }
+}
+
 Server::Server(int argc, char**argv)
 {
     initialisation(argc, argv);
 }
 
+void Server::handleSignal(int signum)
+{
+    if (signum == SIGINT)
+    {
+        std::cout << "\nReceived SIGINT signal. Shutting down server..." << std::endl;
+        _isRunning = false;
+    }
+}
+
+void Server::signalCallback(int signum)
+{
+    if (_instance)
+        _instance->handleSignal(signum);
+}
+
 Server::~Server()
 {
+    // Fermer le socket serveur
+    if (_fd >= 0)
+        close(_fd);
 
+    // Supprimer les clients
+    for (std::map<int, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
+        if (it->second) {
+            close(it->second->getFd());
+            delete it->second;
+        }
+    }
+    _clients.clear();
+
+    // Supprimer les channels
+    for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
+        if (it->second)
+            delete it->second;
+    }
+    _channels.clear();
+
+    _instance = NULL;
 }
 
 std::map<std::string, Channel*>& Server::getChannels()
@@ -178,7 +223,8 @@ void Server::run()
     pollfd server_poll_fd = {_fd, POLLIN, 0};
     _fds.push_back(server_poll_fd);
     _isRunning = true;
-    while (true)
+    std::signal(SIGINT, Server::signalCallback);
+    while (_isRunning)
     {
         int poll_count = poll(_fds.data(), _fds.size(), 100);
         if (poll_count < 0)
@@ -199,4 +245,22 @@ void Server::run()
                 receiveNewSignal(i);
         }
     }
+        // Cleanup avant de quitter
+        std::cout << "Closing all connections..." << std::endl;
+    
+        // Fermer toutes les connexions client avant de terminer
+        for (size_t i = 1; i < _fds.size(); ++i)
+        {
+            if (_fds[i].fd >= 0)
+            {
+                close(_fds[i].fd);
+                if (_clients.find(_fds[i].fd) != _clients.end())
+                {
+                    delete _clients[_fds[i].fd];
+                    _clients.erase(_fds[i].fd);
+                }
+            }
+        }
+        _fds.clear();
+        std::cout << "Server shutdown complete." << std::endl;
 }

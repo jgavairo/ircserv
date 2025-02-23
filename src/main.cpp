@@ -6,11 +6,14 @@ int main (int argc, char**argv)
     {
         Server* server = Server::getInstance(argc, argv);
         server->run();
+        delete server;
+        return 0;
     }
     catch(const std::exception& e)
     {
         std::cerr << e.what() << std::endl;
+        if (Server::getInstance())
+            delete Server::getInstance();
         return -1;
     } 
-    return 0;
 }

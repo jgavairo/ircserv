@@ -4,7 +4,20 @@
 Client::Client(int fd) 
     : _fd(fd), _state(NOT_REGISTERED), _hostname("localhost") {}
 
-Client::~Client() {}
+Client::~Client()
+{
+    // Fermer le file descriptor si ce n'est pas déjà fait
+    if (_fd >= 0)
+        close(_fd);
+    
+    // Quitter tous les channels auxquels le client est connecté
+    for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it)
+    {
+        if (it->second)
+            it->second->removeClient(this);
+    }
+    _channels.clear();
+}
 
 //getters
 int Client::getFd() const { return _fd; }

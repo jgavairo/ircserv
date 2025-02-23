@@ -3,8 +3,21 @@
 
 Channel::Channel(const std::string& name) :_name(name), _topic(""), _empty(true) {}
 
-Channel::~Channel() {}
-
+Channel::~Channel()
+{
+    // Notifier tous les clients que le channel est détruit
+    for (std::map<std::string, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+    {
+        if (it->second)
+        it->second->_channels.erase(_name);
+    }
+    
+    // Vider les collections
+    _clients.clear();
+    _operators.clear();
+    _invitedClients.clear();
+}
+    
 const std::string Channel::getName() const { return _name; }
 
 const std::string Channel::getTopic() const { return _topic; }

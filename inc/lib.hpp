@@ -13,6 +13,7 @@
 #include <vector>
 #include <iterator>
 #include <fcntl.h>
+#include <csignal>
 #include <set>
 #include <poll.h>
 

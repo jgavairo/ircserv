@@ -15,34 +15,36 @@ class Server
         bool _isRunning;
 
         Parser _parser;
-
         std::string _name;
         std::string _password;
         sockaddr_in _server_adress;
-
+        
         CommandsList _commandsList;
         std::vector<pollfd> _fds;
         std::map<int, Client*> _clients;
         std::map<std::string, Channel*> _channels;
         
+        void createBotClient(); // BONUS
         void initialisation(int argc, char** argv);
         int addNewClient();
         void receiveNewSignal(size_t& i);
         void handleCommands(Client* client, std::vector<std::string> commandLines);
         void sendWelcomeMessage(Client& client);
-
+        
         Server(int argc, char**argv);
-
-    public:
+        
+        public:
         ~Server();
         
         void run();
         static Server* getInstance(int argc = 0, char** argv = NULL);
-
+        
         std::map<std::string, Channel*>& getChannels();
         std::map<int, Client*>& getClients();
         const std::string& getPassword() const;
-
+        
+        void handleSignal(int signum);
+        static void signalCallback(int signum);
         void removeEmptyChannel(const std::string& name);
         void updateNickInChannels(const std::string& old_, const std::string& new_);
 

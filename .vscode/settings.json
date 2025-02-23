@@ -52,6 +52,7 @@
         "span": "cpp",
         "cinttypes": "cpp",
         "sstream": "cpp",
-        "cerrno": "cpp"
+        "cerrno": "cpp",
+        "csignal": "cpp"
     }
 }
