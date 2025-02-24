@@ -1,5 +1,4 @@
-#include "IrcBot.hpp"
-#include <iostream>
+#include "../inc/IrcBot.hpp"
 
 int main(int argc, char** argv)
 {

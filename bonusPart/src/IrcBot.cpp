@@ -1,8 +1,8 @@
-#include "IrcBot.hpp"
+#include "../inc/IrcBot.hpp"
 
 IrcBot::IrcBot(int port, const std::string password) : _port(port), _password(password), _running(false), _socket(-1)
 {
-
+    _commandList["!help"] = new Help();
 }
 
 IrcBot::~IrcBot()
@@ -67,7 +67,6 @@ void IrcBot::run()
 
 void IrcBot::handleCommand(const std::string& message)
 {
-    // Implémenter la logique de réponse du bot ici
     std::cout << "Received: " << message << std::endl;
     size_t pos = message.find(":");
     if (pos == std::string::npos)
@@ -83,6 +82,8 @@ void IrcBot::handleCommand(const std::string& message)
         std::istringstream iss(command);
         std::string finalCommand;
         iss >> finalCommand;
+        
         std::cout << "commande recue : [" << finalCommand << "]" << std::endl;
+        send(_socket, finalCommand.c_str(), finalCommand.length(), 0);
     }
 }
