@@ -82,7 +82,6 @@ void Server::removeEmptyChannel(const std::string& name)
 
 void Server::initialisation(int argc, char**argv)
 {
-    _name = SERVER_NAME;
     _parser.parametersChecker(argc, argv, _port);
     std::cout << "Server initialisation..." << std::endl;
     _isRunning = false;
@@ -183,7 +182,7 @@ void Server::receiveNewSignal(size_t& i)
         buffer[bytes_received] = '\0';
         std::string input(buffer);
 
-        std::cout << "New message received from fd[" << _fds[i].fd << "] : {" << input << "}" << std::endl;
+        std::cout << "New message received from fd[" << _fds[i].fd << "] : " << input;
         std::vector<std::string> commandLines = _parser.splitByCRLF(input);
         handleCommands(_clients[_fds[i].fd], commandLines);
     }

@@ -35,7 +35,7 @@
 #define ERR_CHANOPRIVSNEEDED(client, channel) "482 " + client + " " + channel + " :You're not channel operator"
 #define ERR_PASSWDMISMATCH(client) "464 " + client + " :Password incorrect"
 #define ERR_NONICKNAMEGIVEN(client) "431 " + client + " :No nickname given"
-#define ERR_ERRONEUSNICKNAME(client, nick) "432 " + client + " " + nick + " :Erroneous nickname"
+#define ERR_ERRONEUSNICKNAME(nick) "432 " + nick + " :Erroneous nickname"
 #define ERR_USERNOTINCHANNEL(client, user, channel) "441 " + client + " " + user + " " + channel + " :They aren't on that channel"
 #define ERR_UNKNOWNMODE(nick, mode) (":" + nick + " 472 " + mode + " :is unknown mode char to me")
 #define ERR_INVITEONLYCHAN(nick, channel) (":" + nick + " 473 " + channel + " :Cannot join channel (+i)")
@@ -56,6 +56,8 @@
 #define RPL_LISTEND(client) "323 " + client + " :End of /LIST"
 #define RPL_CHANNELMODEIS(nickname, channel, modes) "324 " + nickname + " " + channel + " " + modes
 #define RPL_KICK(kicker, channel, user, comment) ":" + kicker + " KICK " + channel + " " + user + " :" + comment
+#define RPL_MODE_ALREADY_ACTIVE(client, channel, mode) "MODE " + channel + " " + mode + " :Mode is already active"
+#define RPL_TOPIC_ALREADY_SET(client, channel) "332 " + client + " " + channel + " :Topic is already set"
 
 #define PART_MESSAGE(clientPrefix, channel, reason) ":" + clientPrefix + " PART " + channel + (reason.empty() ? "" : " :" + reason)
 

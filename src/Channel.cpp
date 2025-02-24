@@ -107,16 +107,23 @@ void Channel::displayClients() const
 
 
 // Implémentation des méthodes de gestion des modes
-void Channel::setInviteOnly(bool inviteOnly)
+void Channel::setInviteOnly(bool inviteOnly, Client* client, Channel* channel, std::string channelName)
 {
+    if (inviteOnly && _allModes.find('i') != std::string::npos)
+    {
+        client->reply(RPL_MODE_ALREADY_ACTIVE(client->getNickname(), channelName, "i"));
+        return;
+    }
     _inviteOnly = inviteOnly;
 
     if (inviteOnly)
     {
+        channel->broadcast(NOTICE_INVITE_ONLY_SET(client->getNickname(), channelName), NULL);
         std::cout << "[+i] Channel " << _name << " est que sur invitation." << std::endl;
         _allModes += "i";
     }
     else{
+        channel->broadcast(NOTICE_INVITE_ONLY_UNSET(client->getNickname(), channelName), NULL);
         std::cout << "[-i] Channel " << _name << " n'est plus sur invitation." << std::endl;
         _allModes.erase(_allModes.find("i"), 1);
     }
@@ -127,14 +134,21 @@ bool Channel::isInviteOnly() const
     return _inviteOnly;
 }
 
-void Channel::setTopicRestricted(bool topicRestricted)
+void Channel::setTopicRestricted(bool topicRestricted, Client* client, Channel* channel, std::string channelName)
 {
+    if (topicRestricted && _allModes.find('t') != std::string::npos)
+    {
+        client->reply(RPL_TOPIC_ALREADY_SET(client->getNickname(), "t"));
+        return;
+    }
     _topicRestricted = topicRestricted;
     if (topicRestricted){
+        channel->broadcast(NOTICE_TOPIC_RESTRICTED_SET(client->getNickname(), channelName), NULL);
         std::cout << "[+t] Channel " << _name << " is now topic restricted." << std::endl;
         _allModes += "t";
     }
     else{
+        channel->broadcast(NOTICE_TOPIC_RESTRICTED_UNSET(client->getNickname(), channelName), NULL);
         std::cout << "[-t] Channel " << _name << " is no longer topic restricted. " << std::endl;
         _allModes.erase(_allModes.find("t"), 1);
     }
@@ -147,8 +161,7 @@ bool Channel::isTopicRestricted() const
 
 void Channel::setPassword(const std::string& password)
 {
-    if (password[0] != '#')
-        _password = password;
+     _password = password;
     if (!password.empty()){
         std::cout << "[+k] Channel " << _name << " est proteger par le mot de passe : |"<< _password <<"|" << std::endl;
         _allModes += "k";

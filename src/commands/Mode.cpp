@@ -47,25 +47,13 @@ void Mode::execute(Client* client, std::string arguments)
     }
     // Appliquer les changements de mode au canal
     if (mode == "+i")//channel sur invitation uniquement
-    {
-        channel->setInviteOnly(true);
-        
-    }
+        channel->setInviteOnly(true, client, channel, channelName);
     else if (mode == "-i")
-    {
-        channel->setInviteOnly(false);
-        channel->broadcast(NOTICE_INVITE_ONLY_UNSET(client->getNickname(), channelName), NULL);
-    }
+        channel->setInviteOnly(false, client, channel, channelName);
     else if (mode == "+t")
-    {
-        channel->setTopicRestricted(true);
-        channel->broadcast(NOTICE_TOPIC_RESTRICTED_SET(client->getNickname(), channelName), NULL);
-    }
+        channel->setTopicRestricted(true, client, channel, channelName);
     else if (mode == "-t")
-    {
-        channel->setTopicRestricted(false);
-        channel->broadcast(NOTICE_TOPIC_RESTRICTED_UNSET(client->getNickname(), channelName), NULL);
-    }
+        channel->setTopicRestricted(false, client, channel, channelName);
     else if (mode == "+k")//check les cas a gerer en bas
     {
         if (param.empty()) // Vérifier si le mot de passe est vide
