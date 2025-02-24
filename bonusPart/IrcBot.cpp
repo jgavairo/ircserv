@@ -69,10 +69,20 @@ void IrcBot::handleCommand(const std::string& message)
 {
     // Implémenter la logique de réponse du bot ici
     std::cout << "Received: " << message << std::endl;
-    // Exemple: répondre à PING
-    if (message.find("PING") == 0)
+    size_t pos = message.find(":");
+    if (pos == std::string::npos)
+        return;
+    std::string command = message.substr(pos + 1);
+    pos = command.find(":");
+    if (pos != std::string::npos)
+        command = command.substr(pos + 1);
+    if (!command.empty())
     {
-        std::string pong = "PONG" + message.substr(4) + "\r\n";
-        send(_socket, pong.c_str(), pong.length(), 0);
+        if (command[0] == ':')
+            command.erase(0, 1);
+        std::istringstream iss(command);
+        std::string finalCommand;
+        iss >> finalCommand;
+        std::cout << "commande recue : [" << finalCommand << "]" << std::endl;
     }
 }

@@ -72,3 +72,4 @@
 #define NOTICE_USER_LIMIT_UNSET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode -l has been unset")
 #define NOTICE_BOT_ALREADY_PRESENT(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Bot is already in this channel")
 #define NOTICE_BOT_NEED_MORE_PARAM(prefix, channel) (":" + prefix + " NOTICE " + channel + " :For add bot on this channel, please type /ADDBOT <channelName>")
+#define NOTICE_BOT_HELP_INFO(prefix) (":" + prefix + " NOTICE :Type !help to see available bot commands")

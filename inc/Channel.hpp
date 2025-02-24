@@ -39,6 +39,7 @@ public:
     void setUserLimit(int limit);
     void setInitialOperator(Client* client);
     
+    void removeInvite(const std::string& nickname);
     void updateNickname(const std::string& old_, const std::string& new_);
     void addClient(Client* client);
     void removeClient(Client* client);

@@ -64,6 +64,8 @@ void AddBot::execute(Client* client, std::string arguments)
         
         std::string joinMessage = RPL_JOIN(bot->getPrefix(), channel);
         serverChannel[channel]->broadcast(joinMessage, NULL);
+        std::string noticeMessage = ":" + bot->getPrefix() + " NOTICE " + channel + " :<Send !help to know the bot commands.>";
+        serverChannel[channel]->broadcast(noticeMessage, NULL);
     }
     else
     {

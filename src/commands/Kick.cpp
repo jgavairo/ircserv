@@ -55,6 +55,10 @@ void Kick::execute(Client* client, std::string arguments)
                 client->reply(ERR_USERNOTINCHANNEL(client->getNickname(), target, channel));
                 return ;
             }
+            if (serverChannels[channel]->isInvited(it->second))
+            {
+                serverChannels[channel]->removeInvite(target);
+            }
             serverChannels[channel]->broadcast(RPL_KICK(client->getNickname(), channel, target, reason), NULL);
             serverChannels[channel]->removeClient(it->second);
             return;

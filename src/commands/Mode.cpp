@@ -49,7 +49,7 @@ void Mode::execute(Client* client, std::string arguments)
     if (mode == "+i")//channel sur invitation uniquement
     {
         channel->setInviteOnly(true);
-        channel->broadcast(NOTICE_INVITE_ONLY_SET(client->getNickname(), channelName), NULL);
+        
     }
     else if (mode == "-i")
     {

@@ -39,12 +39,12 @@ Server::~Server()
     _clients.clear();
 
     // Supprimer les channels
-    for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
+    for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it) 
+    {
         if (it->second)
             delete it->second;
     }
     _channels.clear();
-
     _instance = NULL;
 }
 
@@ -90,6 +90,13 @@ void Server::initialisation(int argc, char**argv)
     _fd = socket(AF_INET, SOCK_STREAM, 0);
     if (_fd < 0)
         throw(std::runtime_error("Initialisation: FAIL (socket failed)"));
+
+    int opt = 1;
+    if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+    {
+        close(_fd);
+        throw std::runtime_error("Initialisation: FAIL (setsockopt failed)");
+    }
 
     fcntl(_fd, F_SETFL, O_NONBLOCK);
     //initialisation adress

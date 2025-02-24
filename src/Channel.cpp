@@ -92,6 +92,10 @@ void Channel::removeClient(Client* client)
             
             delete this;
         }
+        else if (_clients.size() == 1 && _clients.find("ircbot") != _clients.end())
+        {
+            removeClient(_clients["ircbot"]);
+        }
     }
 }
 
@@ -226,4 +230,11 @@ bool Channel::isInvited(Client* client) const
 void Channel::inviteClient(const std::string& nickname)
 {
     _invitedClients.insert(nickname);
+}
+
+void Channel::removeInvite(const std::string& nickname)
+{
+    std::set<std::string>::iterator it = _invitedClients.find(nickname);
+    if (it != _invitedClients.end())
+        _invitedClients.erase(it);
 }
