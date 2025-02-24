@@ -10,8 +10,6 @@
 #include <sstream>
 #include <string>
 #include <map>
-#include "commands/ABotCommand.hpp"
-#include "commands/Help.hpp"
 
 class IrcBot
 {
@@ -20,7 +18,6 @@ class IrcBot
         int _socket;
         int _port;
         std::string _password;
-        std::map<std::string, ABotCommand*> _commandList;
 
     public:
         IrcBot(int port, const std::string password);

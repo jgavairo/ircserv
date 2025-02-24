@@ -2,7 +2,7 @@
 
 IrcBot::IrcBot(int port, const std::string password) : _port(port), _password(password), _running(false), _socket(-1)
 {
-    _commandList["!help"] = new Help();
+
 }
 
 IrcBot::~IrcBot()
