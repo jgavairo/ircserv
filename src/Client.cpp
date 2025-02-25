@@ -75,7 +75,7 @@ std::string Client::getPrefix() const
 void Client::write(const std::string& message)
 {
     std::string finalMessage = message + CRLF;
-    std::cout << _nickname << message << std::endl;
+    // std::cout << _nickname << message << std::endl;
     if (send(_fd, finalMessage.c_str(), finalMessage.length(), 0) < 0)
         throw (std::runtime_error("writing message from client failed"));
 }

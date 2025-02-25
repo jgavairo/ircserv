@@ -53,6 +53,8 @@
         "cinttypes": "cpp",
         "sstream": "cpp",
         "cerrno": "cpp",
-        "csignal": "cpp"
+        "csignal": "cpp",
+        "ctime": "cpp",
+        "iomanip": "cpp"
     }
 }
