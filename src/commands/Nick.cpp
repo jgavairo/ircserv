@@ -6,6 +6,22 @@ Nick::Nick() {}
 
 Nick::~Nick() {}
 
+#include <cctype>
+#include <string>
+
+bool isValidNickname(const std::string& nickname) {
+    if (nickname.length() > 9 || !isalpha(nickname[0])) {
+        return false;
+    }
+    for (size_t i = 1; i < nickname.length(); ++i) {
+        char c = nickname[i];
+        if (!isalpha(c) && !isalnum(c) && c != '-' && c != '_') {
+            return false;
+        }
+    }
+    return true;
+}
+
 void Nick::execute(Client* client, std::string arguments)
 {
     if (!client->isAuthenticated())
@@ -13,14 +29,19 @@ void Nick::execute(Client* client, std::string arguments)
         client->reply(ERR_NOTREGISTERED());
         return ;
     }
-    if (arguments.empty())
+    std::istringstream iss(arguments);
+    std::string new_nickname;
+    iss >> new_nickname;
+    if (new_nickname.empty())
     {
         client->reply(ERR_NONICKNAMEGIVEN(client->getNickname()));
         return ;
     }
-    std::istringstream iss(arguments);
-    std::string new_nickname;
-    iss >> new_nickname;
+    if (!isValidNickname(new_nickname))
+    {
+        client->reply(ERR_ERRONEUSNICKNAME(arguments));
+        return ;
+    }
 
     Server* server = Server::getInstance();
     std::map<int, Client*>& clientsList = server->getClients();
