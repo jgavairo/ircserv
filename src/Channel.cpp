@@ -1,7 +1,7 @@
 #include "../inc/Channel.hpp"
 #include "../inc/Server.hpp"
 
-Channel::Channel(const std::string& name) :_name(name), _topic(""), _empty(true) {}
+Channel::Channel(const std::string& name) :_name(name), _topic(""), _empty(true), _inviteOnly(false), _topicRestricted(false), _userLimit(0) {}
 
 Channel::~Channel()
 {
@@ -90,7 +90,7 @@ void Channel::removeClient(Client* client)
             Server* server = Server::getInstance();
             server->removeEmptyChannel(_name);
             
-            delete this;
+            // delete this;
         }
         else if (_clients.size() == 1 && _clients.find("ircbot") != _clients.end())
         {

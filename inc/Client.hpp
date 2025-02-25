@@ -23,7 +23,6 @@ class Client
         std::string _realname;
         std::string _password;
         bool        _authenticated;
-        bool        _operator;
     public:
         Client(int fd);
         ~Client();

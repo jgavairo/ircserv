@@ -3,7 +3,7 @@
 
 Server* Server::_instance = NULL;
 
-Server::Server(int argc, char**argv)
+Server::Server(int argc, char**argv) : _isRunning(false)
 {
     initialisation(argc, argv);
 }
@@ -75,6 +75,7 @@ void Server::removeEmptyChannel(const std::string& name)
         // Vérifiez si le canal est vide
         if (it->second->isEmpty()) {
             // Supprimez l'entrée du canal de la liste
+            delete it->second;
             _channels.erase(it);
         }
     }

@@ -2,20 +2,28 @@
 #include "../inc/Channel.hpp"
 
 Client::Client(int fd) 
-    : _fd(fd), _state(NOT_REGISTERED), _hostname("localhost") {}
+    : _fd(fd), _state(NOT_REGISTERED), _hostname("localhost"), _authenticated(false) {}
 
 Client::~Client()
 {
-    // Fermer le file descriptor si ce n'est pas déjà fait
     if (_fd >= 0)
         close(_fd);
     
-    // Quitter tous les channels auxquels le client est connecté
+    // Copier les channels dans un vecteur temporaire
+    std::vector<Channel*> channels_to_remove;
     for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it)
     {
         if (it->second)
-            it->second->removeClient(this);
+            channels_to_remove.push_back(it->second);
     }
+    
+    // Supprimer le client de chaque channel
+    for (size_t i = 0; i < channels_to_remove.size(); ++i)
+    {
+        if (channels_to_remove[i])
+            channels_to_remove[i]->removeClient(this);
+    }
+    
     _channels.clear();
 }
 
@@ -36,7 +44,6 @@ void Client::setRealname(const std::string& realname) { _realname = realname; }
 void Client::setState(ClientState state) { _state = state; }
 
 bool Client::isAuthenticated() { return _authenticated; }
-bool Client::isOperator() { return _operator; }
 
 void Client::reply(const std::string& reply)
 {

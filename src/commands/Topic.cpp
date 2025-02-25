@@ -42,7 +42,7 @@ void Topic::execute(Client* client, std::string arguments)
     }
     else if (channelTarget && !newTopic.empty())
     {
-        if (!channelTarget->isOperator(client))
+        if (channelTarget->isTopicRestricted() && !channelTarget->isOperator(client))
         {
             client->reply(ERR_CHANOPRIVSNEEDED(client->getNickname(), channel));
             return ;

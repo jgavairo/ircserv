@@ -15,9 +15,9 @@ private:
     std::string _allModes;
     std::set<std::string> _operators;
     std::set<std::string> _invitedClients;
-    bool    _topicRestricted;
-    bool    _inviteOnly;
     bool    _empty;
+    bool    _inviteOnly;
+    bool    _topicRestricted;
     size_t  _userLimit;
 public:
     std::map<std::string, Client*> _clients;

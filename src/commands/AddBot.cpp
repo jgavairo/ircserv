@@ -39,22 +39,19 @@ void AddBot::execute(Client* client, std::string arguments)
             break;
         }
     }
-    
-    if (!serverChannel[channel]->isOperator(client))
-    {
-        client->reply(ERR_CHANOPRIVSNEEDED(client->getNickname(), channel));
-        return ;
-    }
-
     if (!bot)
     {
-        client->reply(ERR_NOSUCHNICK(client->getNickname(), "ircbot"));
+        client->userReply(NOTICE_BOT_NOT_FOUND(client->getNickname(), "ircbot"));
         return ;
     }
-
     if (serverChannel.find(channel) != serverChannel.end())
     {
-        if (serverChannel[channel]->isInvited(bot)) // A FAIRE -> supprimmer un invite si il est kick (pouvoir reinviter le bot en cas de kick)
+        if (!serverChannel[channel]->isOperator(client))
+        {
+            client->reply(ERR_CHANOPRIVSNEEDED(client->getNickname(), channel));
+            return ;
+        }
+        if (serverChannel[channel]->isInvited(bot))
         {
             client->userReply(NOTICE_BOT_ALREADY_PRESENT(client->getNickname(), channel));
             return ;
@@ -69,7 +66,7 @@ void AddBot::execute(Client* client, std::string arguments)
     }
     else
     {
-        client->reply(ERR_NOSUCHCHANNEL(client->getNickname(), channel));
+        client->userReply(NOTICE_BOT_NOSUCHCHANNEL(client->getNickname(), channel));
         return ;
     }
 }

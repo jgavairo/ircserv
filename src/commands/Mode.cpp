@@ -78,11 +78,41 @@ void Mode::execute(Client* client, std::string arguments)
     {
         channel->addOperator(param);
         channel->broadcast(NOTICE_OPERATOR_ADDED(client->getNickname(), channelName, param), NULL);
+        std::string namesList;
+        const std::vector<std::string>& clients = channels[channelName]->getNamesClients();
+        for (size_t i = 0; i < clients.size(); ++i) 
+        {
+            if (!namesList.empty()) 
+            {
+                namesList += " ";
+            }
+            if (channels[channelName]->isOperatorByName(clients[i]))
+                namesList += "@" + clients[i];
+            else
+                namesList += clients[i];
+        }
+        client->reply(RPL_NAMREPLY(client->getNickname(), channelName, namesList));
+        client->reply(RPL_ENDOFNAMES(client->getNickname(), channelName));
     }
     else if (mode == "-o")
     {
         channel->removeOperator(param);
         channel->broadcast(NOTICE_OPERATOR_REMOVED(client->getNickname(), channelName, param), NULL);
+        std::string namesList;
+        const std::vector<std::string>& clients = channels[channelName]->getNamesClients();
+        for (size_t i = 0; i < clients.size(); ++i) 
+        {
+            if (!namesList.empty()) 
+            {
+                namesList += " ";
+            }
+            if (channels[channelName]->isOperatorByName(clients[i]))
+                namesList += "@" + clients[i];
+            else
+                namesList += clients[i];
+        }
+        client->reply(RPL_NAMREPLY(client->getNickname(), channelName, namesList));
+        client->reply(RPL_ENDOFNAMES(client->getNickname(), channelName));
     }
     else if (mode == "+l")
     {

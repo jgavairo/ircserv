@@ -79,7 +79,6 @@ void Join::execute(Client* client, std::string arguments)
                 channels[channelName]->addClient(client);
             indexKey++;
         }
-
         std::string namesList;
         const std::vector<std::string>& clients = channels[channelName]->getNamesClients();
         for (size_t i = 0; i < clients.size(); ++i) 
@@ -106,3 +105,5 @@ void Join::execute(Client* client, std::string arguments)
         std::cout << "Client " << client->getFd() << " joined channel: " << channelName << std::endl;
     }
 }
+
+//LANCER SERVEUR, CONNECTER 2 CLIENTS ET LE BOT, CTRL+C LE BOT ET CTRL+C LE SERVER, BCP DE PB
