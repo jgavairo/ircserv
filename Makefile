@@ -24,6 +24,9 @@ SRCS = 	main.cpp Client.cpp Server.cpp Channel.cpp Parser.cpp \
 		commands/ACommand.cpp \
 		commands/CommandsList.cpp \
 		commands/Quit.cpp \
+		commands/BotHelp.cpp \
+		commands/BotTime.cpp \
+		commands/BotQuizz.cpp \
 		commands/Mode.cpp 
 OBJS = $(addprefix $(OBJDIR)/, $(SRCS:.cpp=.o))
 DEPS = $(addprefix $(DEPDIR)/, $(SRCS:.cpp=.d))

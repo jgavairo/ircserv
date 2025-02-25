@@ -72,4 +72,9 @@
 #define NOTICE_USER_LIMIT_UNSET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode -l has been unset")
 #define NOTICE_BOT_ALREADY_PRESENT(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Bot is already in this channel")
 #define NOTICE_BOT_NEED_MORE_PARAM(prefix, channel) (":" + prefix + " NOTICE " + channel + " :For add bot on this channel, please type /ADDBOT <channelName>")
-#define NOTICE_BOT_HELP_INFO(prefix) (":" + prefix + " NOTICE :Type !help to see available bot commands")
+#define NOTICE_BOT_HELP_INFO(prefix, Channel) (":" + prefix + " NOTICE " + channel + " :Type !help to see available bot commands")
+
+#define NOTICE_BOT_HELP_HEADER(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Available commands:")
+#define NOTICE_BOT_HELP_TIME(prefix, channel) (":" + prefix + " NOTICE " + channel + " :<!time>:\t\tdisplay hour in the channel")
+#define NOTICE_BOT_HELP_QUIZZ(prefix, channel) (":" + prefix + " NOTICE " + channel + " :<!quizz>:\tmini game! Displays rap lyrics and you have to guess the artist!")
+#define NOTICE_BOT_TIME(prefix, channel, time) (":" + prefix + " NOTICE " + channel + " :Current time is " + currentTime)

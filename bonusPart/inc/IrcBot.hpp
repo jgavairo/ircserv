@@ -11,6 +11,8 @@
 #include <string>
 #include <map>
 
+#define CRLF "\r\n"
+
 class IrcBot
 {
     private:

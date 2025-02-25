@@ -68,22 +68,34 @@ void IrcBot::run()
 void IrcBot::handleCommand(const std::string& message)
 {
     std::cout << "Received: " << message << std::endl;
-    size_t pos = message.find(":");
-    if (pos == std::string::npos)
-        return;
-    std::string command = message.substr(pos + 1);
-    pos = command.find(":");
-    if (pos != std::string::npos)
-        command = command.substr(pos + 1);
-    if (!command.empty())
+    std::string channel, command, noConstMessage;
+    noConstMessage = message;
+    size_t posHt, posPts;
+    if (noConstMessage[0] == ':')
+        noConstMessage.erase(0, 1);
+    posHt = noConstMessage.find('#');
+    posPts = noConstMessage.find(':');
+    if (posHt != std::string::npos) 
     {
-        if (command[0] == ':')
-            command.erase(0, 1);
-        std::istringstream iss(command);
-        std::string finalCommand;
-        iss >> finalCommand;
-        
-        std::cout << "commande recue : [" << finalCommand << "]" << std::endl;
-        send(_socket, finalCommand.c_str(), finalCommand.length(), 0);
+        size_t spaceAfterHash = noConstMessage.find(' ', posHt);
+        if (spaceAfterHash != std::string::npos) 
+            channel = noConstMessage.substr(posHt, spaceAfterHash - posHt);
     }
+    
+    if (posPts != std::string::npos) 
+    {
+        size_t spaceAfterColon = noConstMessage.find(' ', posPts);
+        if (spaceAfterColon != std::string::npos)
+            command = noConstMessage.substr(posPts, spaceAfterColon - posPts);
+        else 
+            command = noConstMessage.substr(posPts);
+    }
+
+    if (command[0] == ':')
+        command.erase(0, 1);
+    command.erase(command.find_last_not_of("\r\n") + 1);
+    // std::cout << "Channel: [" << channel << "]" << std::endl;
+    // std::cout << "Command: [" << command << "]" << std::endl;
+    std::string output = (command + " " + channel);
+    send(_socket, output.c_str(), output.length(), 0);
 }
