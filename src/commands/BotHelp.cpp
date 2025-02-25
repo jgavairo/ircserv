@@ -16,7 +16,7 @@ void BotHelp::execute(Client* client, std::string arguments)
             std::string channel = arguments;
             client->_channels[arguments]->broadcast(NOTICE_BOT_HELP_HEADER(client->getPrefix(), channel), client);
             client->_channels[arguments]->broadcast(NOTICE_BOT_HELP_TIME(client->getPrefix(), channel), client);
-            client->_channels[arguments]->broadcast(NOTICE_BOT_HELP_QUIZZ(client->getPrefix(), channel), client);
+            client->_channels[arguments]->broadcast(NOTICE_BOT_HELP_PUNCHLINE(client->getPrefix(), channel), client);
         }
     }
 }
