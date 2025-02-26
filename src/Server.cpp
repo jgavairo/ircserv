@@ -161,6 +161,7 @@ void Server::receiveNewSignal(size_t& i)
         std::cout << "client has disconnected. fd: " << _fds[i].fd << std::endl;
         close(_fds[i].fd);
         delete _clients[_fds[i].fd];
+        _clients.erase(_fds[i].fd);
         _fds.erase(_fds.begin() + i);
         i--;
     }
@@ -172,6 +173,7 @@ void Server::receiveNewSignal(size_t& i)
         std::cout << "Error: impossible to reading from client, " << strerror(errno) << std::endl;
         close(_fds[i].fd);
         delete _clients[_fds[i].fd];
+        _clients.erase(_fds[i].fd);
         _fds.erase(_fds.begin() + i);
         i--;
     }

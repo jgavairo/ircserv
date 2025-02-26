@@ -19,8 +19,7 @@ void Mode::execute(Client* client, std::string arguments)
 
     if (channelName.empty())//channelName ou mode est vide
     {
-        client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "MODE"));
-        return;
+        client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "MODE"));return;
     }
 
     Server* server = Server::getInstance();//recuperer l'instance du serveur
@@ -28,8 +27,7 @@ void Mode::execute(Client* client, std::string arguments)
 
     if (channels.find(channelName) == channels.end())//channelName n'existe pas
     {
-        client->reply(ERR_NOSUCHCHANNEL(client->getNickname(), channelName));
-        return;
+        client->reply(ERR_NOSUCHCHANNEL(client->getNickname(), channelName));return;
     }
 
     Channel* channel = channels[channelName];//recuperer le channel
@@ -42,8 +40,7 @@ void Mode::execute(Client* client, std::string arguments)
     }
     if (!channel->isOperator(client))//Arret si le client n'est pas operateur
     {
-        client->reply(ERR_CHANOPRIVSNEEDED(client->getNickname(), channelName));
-        return;
+        client->reply(ERR_CHANOPRIVSNEEDED(client->getNickname(), channelName));return;
     }
     // Appliquer les changements de mode au canal
     if (mode == "+i")//channel sur invitation uniquement
@@ -58,13 +55,11 @@ void Mode::execute(Client* client, std::string arguments)
     {
         if (param.empty()) // Vérifier si le mot de passe est vide
         {
-            client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), mode));
-            return;
+            client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "MODE"));return;
         }
         if (param[0] == '#')
         {
-            client->reply(ERR_PASSWDMISMATCH(client->getNickname()));
-            return;
+            client->reply(ERR_PASSWDMISMATCH(client->getNickname()));return;
         }
         channel->setPassword(param);
         channel->broadcast(NOTICE_PASSWORD_SET(client->getNickname(), channelName), NULL);
@@ -103,9 +98,7 @@ void Mode::execute(Client* client, std::string arguments)
         for (size_t i = 0; i < clients.size(); ++i) 
         {
             if (!namesList.empty()) 
-            {
                 namesList += " ";
-            }
             if (channels[channelName]->isOperatorByName(clients[i]))
                 namesList += "@" + clients[i];
             else
@@ -116,10 +109,14 @@ void Mode::execute(Client* client, std::string arguments)
     }
     else if (mode == "+l")
     {
+        if (param.empty()) // Vérifier si le mot de passe est vide
+        {
+            client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "MODE"));return;
+        }
         size_t newLimit = std::atoi(param.c_str());
         if (newLimit < channel->getUserCount()) // Vérifier si la nouvelle limite est inférieure au nombre actuel d'utilisateurs
         {
-            client->reply(ERR_CANNOTSETLIMIT(client->getNickname(), channelName));
+            client->userReply(NOTICE_CANNOTSETLIMIT(client->getPrefix(), channelName));
             return;
         }
         channel->setUserLimit(newLimit);
@@ -132,8 +129,7 @@ void Mode::execute(Client* client, std::string arguments)
     }
     else
     {
-        client->reply(ERR_UNKNOWNMODE(client->getNickname(), mode));
-        return;
+        client->reply(ERR_UNKNOWNMODE(client->getNickname(), mode));return;
     }
     //envoyer le message de changement de mode
     channel->broadcast(":" + client->getNickname() + " MODE " + channelName + " " + mode + " " + param, client);
