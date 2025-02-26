@@ -1,23 +1,19 @@
-#include "../inc/IrcBot.hpp"
+#include "Server.hpp"
 
-int main(int argc, char** argv)
+int main (int argc, char**argv)
 {
-    if (argc != 3)
+    try
     {
-        std::cerr << "Usage: " << argv[0] << " <port> <password>" << std::endl;
-        return 1;
+        Server* server = Server::getInstance(argc, argv);
+        server->run();
+        delete server;
+        return 0;
     }
-
-    IrcBot bot(std::atoi(argv[1]), argv[2]);
-    
-    if (!bot.connect())
+    catch(const std::exception& e)
     {
-        std::cerr << "Failed to connect to server" << std::endl;
-        return 1;
-    }
-
-    std::cout << "Bot connected to server" << std::endl;
-    bot.run();
-
-    return 0;
+        std::cerr << e.what() << std::endl;
+        if (Server::getInstance())
+            delete Server::getInstance();
+        return -1;
+    } 
 }

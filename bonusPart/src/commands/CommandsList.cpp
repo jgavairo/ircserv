@@ -11,7 +11,11 @@
 #include "../../inc/commands/Topic.hpp"
 #include "../../inc/commands/Invite.hpp"
 #include "../../inc/commands/Part.hpp"
+#include "../../inc/commands/AddBot.hpp"
 #include "../../inc/commands/Mode.hpp"
+#include "../../inc/commands/BotHelp.hpp"
+#include "../../inc/commands/BotTime.hpp"
+#include "../../inc/commands/BotPunchline.hpp"
 
 CommandsList::CommandsList()
 {
@@ -19,6 +23,7 @@ CommandsList::CommandsList()
     _list["USER"] = new User();
     _list["JOIN"] = new Join();
     _list["PRIVMSG"] = new Privmsg();
+    _list["BOT"] = new AddBot();
     _list["NOTICE"] = new Notice();
     _list["PASS"] = new Pass();
     _list["QUIT"] = new Quit();
@@ -28,6 +33,10 @@ CommandsList::CommandsList()
     _list["INVITE"] = new Invite();
     _list["LIST"] = new List();
     _list["MODE"] = new Mode();
+
+    _list["!help"] = new BotHelp();
+    _list["!punchline"] = new BotPunchline();
+    _list["!time"] = new BotTime();
 }
 
 CommandsList::~CommandsList()

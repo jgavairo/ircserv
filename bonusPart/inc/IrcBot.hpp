@@ -6,6 +6,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <cstring>
+#include <cstdlib>
 #include <fcntl.h>
 #include <sstream>
 #include <string>
@@ -16,10 +17,10 @@
 class IrcBot
 {
     private:
-        bool _running;
-        int _socket;
         int _port;
         std::string _password;
+        bool _running;
+        int _socket;
 
     public:
         IrcBot(int port, const std::string password);
