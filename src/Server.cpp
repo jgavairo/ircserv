@@ -31,7 +31,8 @@ Server::~Server()
 
     // Supprimer les clients
     for (std::map<int, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
-        if (it->second) {
+        if (it->second) 
+        {
             close(it->second->getFd());
             delete it->second;
         }
@@ -160,8 +161,12 @@ void Server::receiveNewSignal(size_t& i)
         //deconnexion du client
         std::cout << "client has disconnected. fd: " << _fds[i].fd << std::endl;
         close(_fds[i].fd);
-        delete _clients[_fds[i].fd];
-        _clients.erase(_fds[i].fd);
+        if (_clients.find(_fds[i].fd) != _clients.end()) 
+        {
+            delete _clients[_fds[i].fd];  // Libérer la mémoire
+            _clients[_fds[i].fd] = NULL;  // Marquer comme supprimé
+            _clients.erase(_fds[i].fd);   // Retirer de la map
+        }
         _fds.erase(_fds.begin() + i);
         i--;
     }
@@ -172,8 +177,12 @@ void Server::receiveNewSignal(size_t& i)
             return ;
         std::cout << "Error: impossible to reading from client, " << strerror(errno) << std::endl;
         close(_fds[i].fd);
-        delete _clients[_fds[i].fd];
-        _clients.erase(_fds[i].fd);
+        if (_clients.find(_fds[i].fd) != _clients.end()) 
+        {
+            delete _clients[_fds[i].fd];  // Libérer la mémoire
+            _clients[_fds[i].fd] = NULL;  // Marquer comme supprimé
+            _clients.erase(_fds[i].fd);   // Retirer de la map
+        }
         _fds.erase(_fds.begin() + i);
         i--;
     }
@@ -249,14 +258,7 @@ void Server::run()
         for (size_t i = 1; i < _fds.size(); ++i)
         {
             if (_fds[i].fd >= 0)
-            {
                 close(_fds[i].fd);
-                if (_clients.find(_fds[i].fd) != _clients.end())
-                {
-                    delete _clients[_fds[i].fd];
-                    _clients.erase(_fds[i].fd);
-                }
-            }
         }
         _fds.clear();
         std::cout << "Server shutdown complete." << std::endl;
