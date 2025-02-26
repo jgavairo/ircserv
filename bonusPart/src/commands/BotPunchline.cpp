@@ -5,12 +5,12 @@
 
 BotPunchline::BotPunchline()
 {
-    _punchlines["Dites à Donald qu’il s'Trump."] = "Lle-pier,  Le Cafard.";
-    _punchlines["J'arrive à balle, gé-char, donc ça me gratte vers le zizi."] = "Qordoux, Le samourai d'Auxerre.";
-    _punchlines["Je suis dans une sacrée salade, y m'faut deux avocats."] = "Lmattern, Sergent-Chef.";
-    _punchlines["Frère si je sors la AK, je sais qu'ils feront tous caca."] = "Fprevot, 4-Steaks.";
-    _punchlines["T'as l'impression que je scratche quand je gratte mes deux grosses couilles crépues."] = "Maeferre, Jamais la.";
-    _punchlines["J’ai trop d’inspi, ça sort de mon corps comme si j’avais lâché une crotte."] = "Abolea, Bleu metal.";
+    _punchlines["\"Dites à Donald qu’il s'Trump\""] = "Lle-pier,  Le Cafard.";
+    _punchlines["\"J'arrive à balle, gé-char, donc ça me gratte vers le zizi\""] = "Qordoux, Le samourai d'Auxerre.";
+    _punchlines["\"Je suis dans une sacrée salade, y m'faut deux avocats\""] = "Lmattern, Sergent-Chef.";
+    _punchlines["\"Frère si je sors la AK, je sais qu'ils feront tous caca\""] = "Fprevot, 4-Steaks.";
+    _punchlines["\"T'as l'impression que je scratche quand je gratte mes deux grosses couilles crépues\""] = "Maeferre, Jamais la.";
+    _punchlines["\"J’ai trop d’inspi, ça sort de mon corps comme si j’avais lâché une crotte\""] = "Abolea, Bleu metal.";
 }
 
 BotPunchline::~BotPunchline() {}
