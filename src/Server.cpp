@@ -129,8 +129,6 @@ int Server::addNewClient()
         return -1;
     }
     fcntl(client_socket, F_SETFL, O_NONBLOCK);
-    std::cout << "New client connected: " << client_socket << std::endl;
-
     std::string initialResponse = ":irc.example.com NOTICE * :Welcome to My IRC Server!\r\n";
     ssize_t bytes_sent = send(client_socket, initialResponse.c_str(), initialResponse.size(), 0);
     if (bytes_sent < 0 && (errno == EWOULDBLOCK || errno == EAGAIN)) 

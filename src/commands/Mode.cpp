@@ -142,3 +142,7 @@ void Mode::execute(Client* client, std::string arguments)
 //Pour +k, cas a gerer : 
 //si le mot de passe commence par #
 //si rien nest entrer apres +k (cela renvient a -k)
+
+//mode +l sans argument reply pas bon GARBAGE
+//mode +bad char reply pas bon GARBAGE
+//mode +k sans argument reply dans serveur au lieu de dans le channel pas bon

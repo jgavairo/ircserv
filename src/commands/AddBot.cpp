@@ -46,6 +46,11 @@ void AddBot::execute(Client* client, std::string arguments)
     }
     if (serverChannel.find(channel) != serverChannel.end())
     {
+        if (!client->searchChannel(channel))
+        {
+            client->reply(ERR_NOTONCHANNEL(client->getNickname(), channel));
+            return ;
+        }
         if (!serverChannel[channel]->isOperator(client))
         {
             client->reply(ERR_CHANOPRIVSNEEDED(client->getNickname(), channel));

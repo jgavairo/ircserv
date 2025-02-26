@@ -67,7 +67,6 @@ void IrcBot::run()
 
 void IrcBot::handleCommand(const std::string& message)
 {
-    std::cout << "Received: " << message << std::endl;
     std::string channel, command, noConstMessage;
     noConstMessage = message;
     size_t posHt, posPts;
@@ -94,8 +93,6 @@ void IrcBot::handleCommand(const std::string& message)
     if (command[0] == ':')
         command.erase(0, 1);
     command.erase(command.find_last_not_of("\r\n") + 1);
-    // std::cout << "Channel: [" << channel << "]" << std::endl;
-    // std::cout << "Command: [" << command << "]" << std::endl;
     std::string output = (command + " " + channel);
     send(_socket, output.c_str(), output.length(), 0);
 }
