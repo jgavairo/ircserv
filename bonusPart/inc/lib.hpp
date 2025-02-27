@@ -64,6 +64,7 @@
 #define PART_MESSAGE(clientPrefix, channel, reason) ":" + clientPrefix + " PART " + channel + (reason.empty() ? "" : " :" + reason)
 #define NOTICE_INVITE_ONLY_SET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode +i has been set")
 #define NOTICE_INVITE_ONLY_UNSET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode -i has been unset")
+#define NOTICE_INVITE_NO_SET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode i is not set")
 #define NOTICE_TOPIC_RESTRICTED_SET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode +t has been set")
 #define NOTICE_TOPIC_RESTRICTED_UNSET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode -t has been unset")
 #define NOTICE_PASSWORD_SET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode +k has been set")

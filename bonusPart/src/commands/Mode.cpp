@@ -76,6 +76,11 @@ void Mode::execute(Client* client, std::string arguments)
     }
     else if (mode == "+o")
     {
+        if (param.empty())
+        {
+            client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "MODE +o"));
+            return;
+        }
         channel->addOperator(param);
         channel->broadcast(NOTICE_OPERATOR_ADDED(client->getNickname(), channelName, param), NULL);
         std::string namesList;
@@ -122,9 +127,8 @@ void Mode::execute(Client* client, std::string arguments)
             return ;
         }
         size_t newLimit = std::atoi(param.c_str());
-        if (newLimit < channel->getUserCount()) // Vérifier si la nouvelle limite est inférieure au nombre actuel d'utilisateurs
+        if (newLimit < channel->getUserCount())
         {
-            std::cout << "ON PASSE ICI" << std::endl;
             client->reply(ERR_CANNOTSETLIMIT(client->getNickname(), channelName));
             return;
         }
@@ -141,7 +145,6 @@ void Mode::execute(Client* client, std::string arguments)
         client->reply(ERR_UNKNOWNMODE(client->getNickname(), mode));
         return;
     }
-    //envoyer le message de changement de mode
     channel->broadcast(":" + client->getNickname() + " MODE " + channelName + " " + mode + " " + param, client);
 }
 

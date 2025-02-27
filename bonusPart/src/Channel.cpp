@@ -123,9 +123,15 @@ void Channel::setInviteOnly(bool inviteOnly, Client* client, Channel* channel, s
         _allModes += "i";
     }
     else{
-        channel->broadcast(NOTICE_INVITE_ONLY_UNSET(client->getNickname(), channelName), NULL);
         std::cout << "[-i] Channel " << _name << " n'est plus sur invitation." << std::endl;
-        _allModes.erase(_allModes.find("i"), 1);
+        size_t pos = _allModes.find("i");
+        if (pos != std::string::npos)
+        {
+            channel->broadcast(NOTICE_INVITE_ONLY_UNSET(client->getNickname(), channelName), NULL);
+            _allModes.erase(_allModes.find("i"), 1);
+        }
+        else
+            client->userReply(NOTICE_INVITE_NO_SET(client->getNickname(), channel->getName()));
     }
 }
 
