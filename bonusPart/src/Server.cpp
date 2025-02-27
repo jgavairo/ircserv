@@ -157,45 +157,83 @@ void Server::receiveNewSignal(size_t& i)
     ssize_t bytes_received = recv(_fds[i].fd, buffer, sizeof(buffer) - 1, 0);
     int saved_errno = errno;
 
-    if (bytes_received == 0)
+    if (bytes_received <= 0)
     {
-        //deconnexion du client
-        std::cout << "client has disconnected. fd: " << _fds[i].fd << std::endl;
-        close(_fds[i].fd);
-        if (_clients.find(_fds[i].fd) != _clients.end()) 
-        {
-            delete _clients[_fds[i].fd];  // Libérer la mémoire
-            _clients[_fds[i].fd] = NULL;  // Marquer comme supprimé
-            _clients.erase(_fds[i].fd);   // Retirer de la map
-        }
-        _fds.erase(_fds.begin() + i);
-        i--;
-    }
-    else if (bytes_received < 0)
-    {
-        //erreur
-        if (saved_errno == EWOULDBLOCK || errno == EAGAIN)
-            return ;
-        std::cout << "Error: impossible to reading from client, " << strerror(errno) << std::endl;
-        close(_fds[i].fd);
-        if (_clients.find(_fds[i].fd) != _clients.end()) 
-        {
-            delete _clients[_fds[i].fd];  // Libérer la mémoire
-            _clients[_fds[i].fd] = NULL;  // Marquer comme supprimé
-            _clients.erase(_fds[i].fd);   // Retirer de la map
-        }
-        _fds.erase(_fds.begin() + i);
-        i--;
-    }
-    else
-    {
-        //OK
-        buffer[bytes_received] = '\0';
-        std::string input(buffer);
+        if (bytes_received == 0)
+            std::cout << "client has disconnected. fd: " << _fds[i].fd << std::endl;
+        else if (saved_errno == EWOULDBLOCK || saved_errno == EAGAIN)
+            return;
+        else
+            std::cout << "Error: impossible to reading from client, " << strerror(saved_errno) << std::endl;
 
-        // std::cout << "New message received from fd[" << _fds[i].fd << "] : {" << input << "}" << std::endl;
-        std::vector<std::string> commandLines = _parser.splitByCRLF(input);
-        handleCommands(_clients[_fds[i].fd], commandLines);
+        close(_fds[i].fd);
+        if (_clients.find(_fds[i].fd) != _clients.end()) 
+        {
+            delete _clients[_fds[i].fd];
+            _clients.erase(_fds[i].fd);
+        }
+        _fds.erase(_fds.begin() + i);
+        i--;
+        return;
+    }
+    
+    // Traitement des données reçues
+    buffer[bytes_received] = '\0';
+    std::string input(buffer);
+    
+    // Vérification que le client existe
+    if (_clients.find(_fds[i].fd) == _clients.end())
+    {
+        std::cout << "Client not found for fd: " << _fds[i].fd << std::endl;
+        return;
+    }
+    
+    Client* client = _clients[_fds[i].fd];
+    
+    client->appendToBuffer(input);
+
+    std::string& clientBuffer = client->getBuffer();
+    
+    size_t pos = clientBuffer.find("\r\n");
+    std::vector<std::string> commandsToProcess;
+    
+    while (pos != std::string::npos) 
+    {
+        // Extraire une commande complète
+        std::string completeCommand = clientBuffer.substr(0, pos);
+        if (!completeCommand.empty())
+            commandsToProcess.push_back(completeCommand);
+        
+        // Supprimer la commande traitée du buffer
+        clientBuffer = clientBuffer.substr(pos + 2); // +2 pour sauter "\r\n"
+        
+        // Chercher la prochaine commande complète
+        pos = clientBuffer.find("\r\n");
+    }
+    
+    // Vérifier également les commandes terminées uniquement par \n
+    pos = clientBuffer.find("\n");
+    while (pos != std::string::npos && pos > 0 && clientBuffer[pos-1] != '\r') 
+    {
+        // Extraire une commande complète
+        std::string completeCommand = clientBuffer.substr(0, pos);
+        if (!completeCommand.empty())
+            commandsToProcess.push_back(completeCommand);
+        
+        // Supprimer la commande traitée du buffer
+        clientBuffer = clientBuffer.substr(pos + 1); // +1 pour sauter "\n"
+        
+        // Chercher la prochaine commande complète
+        pos = clientBuffer.find("\n");
+    }
+    
+    if (!commandsToProcess.empty())
+        handleCommands(client, commandsToProcess);
+    
+    if (clientBuffer.size() > 4096)
+    {
+        std::cout << "Warning: Client buffer overflow, truncating. fd: " << _fds[i].fd << std::endl;
+        clientBuffer = clientBuffer.substr(0, 4096);
     }
 }
 
