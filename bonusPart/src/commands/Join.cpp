@@ -105,5 +105,3 @@ void Join::execute(Client* client, std::string arguments)
         std::cout << "Client " << client->getFd() << " joined channel: " << channelName << std::endl;
     }
 }
-
-//LANCER SERVEUR, CONNECTER 2 CLIENTS ET LE BOT, CTRL+C LE BOT ET CTRL+C LE SERVER, BCP DE PB

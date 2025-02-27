@@ -17,30 +17,30 @@ void Mode::execute(Client* client, std::string arguments)
     std::string channelName, mode, param;
     iss >> channelName >> mode >> param;
 
-    if (channelName.empty())//channelName ou mode est vide
+    if (channelName.empty())
     {
         client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "MODE"));
         return;
     }
 
-    Server* server = Server::getInstance();//recuperer l'instance du serveur
-    std::map<std::string, Channel*>& channels = server->getChannels();//recuperer la liste des channels
+    Server* server = Server::getInstance();
+    std::map<std::string, Channel*>& channels = server->getChannels();
 
-    if (channels.find(channelName) == channels.end())//channelName n'existe pas
+    if (channels.find(channelName) == channels.end())
     {
         client->reply(ERR_NOSUCHCHANNEL(client->getNickname(), channelName));
         return;
     }
 
-    Channel* channel = channels[channelName];//recuperer le channel
-    // Si aucun mode n'est spécifié, retourner les modes actuels du canal
+    Channel* channel = channels[channelName];
+
     if (mode.empty())
     {
         std::string currentModes = channel->getAllModes();
         client->reply(RPL_CHANNELMODEIS(client->getNickname(), channelName, currentModes));
         return;
     }
-    if (!channel->isOperator(client))//Arret si le client n'est pas operateur
+    if (!channel->isOperator(client))
     {
         client->reply(ERR_CHANOPRIVSNEEDED(client->getNickname(), channelName));
         return;
@@ -56,7 +56,7 @@ void Mode::execute(Client* client, std::string arguments)
         channel->setTopicRestricted(false, client, channel);
     else if (mode == "+k")//check les cas a gerer en bas
     {
-        if (param.empty()) // Vérifier si le mot de passe est vide
+        if (param.empty())
         {
             client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), mode));
             return;
@@ -145,11 +145,3 @@ void Mode::execute(Client* client, std::string arguments)
     }
     channel->broadcast(":" + client->getNickname() + " MODE " + channelName + " " + mode + " " + param, client);
 }
-
-//Pour +k, cas a gerer : 
-//si le mot de passe commence par #
-//si rien nest entrer apres +k (cela renvient a -k)
-
-//mode +l sans argument reply pas bon GARBAGE
-//mode +bad char reply pas bon GARBAGE
-//mode +k sans argument reply dans serveur au lieu de dans le channel pas bon

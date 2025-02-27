@@ -32,13 +32,10 @@ bool IrcBot::connect()
         close(_socket);
         return false;
     }
-
-    // Authentification du bot
     std::string auth = "PASS " + _password + "\r\n"
                       "NICK ircbot\r\n"
                       "USER ircbot 0 * :The real IRC bot\r\n";
     send(_socket, auth.c_str(), auth.length(), 0);
-
     fcntl(_socket, F_SETFL, O_NONBLOCK);
     return true;
 }

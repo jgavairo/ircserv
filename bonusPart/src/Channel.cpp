@@ -81,7 +81,6 @@ void Channel::removeClient(Client* client)
         client->leaveChannel(this);
         std::cout << "Client " << client->getNickname() << " removed from channel " << _name << std::endl;
 
-        //si le channel est vide, on le supprime
         if (_clients.empty())
         {
             std::cout << "Channel " << _name << " is now empty and will be deleted.\n";
@@ -89,8 +88,6 @@ void Channel::removeClient(Client* client)
             
             Server* server = Server::getInstance();
             server->removeEmptyChannel(_name);
-            
-            // delete this;
         }
         else if (_clients.size() == 1 && _clients.find("ircbot") != _clients.end())
         {
@@ -98,13 +95,6 @@ void Channel::removeClient(Client* client)
         }
     }
 }
-
-void Channel::displayClients() const
-{
-    for (std::map<std::string, Client*>::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
-        std::cout << it->first << " : " << it->second->getNickname() << std::endl;
-}
-
 
 // Implémentation des méthodes de gestion des modes
 void Channel::setInviteOnly(bool inviteOnly, Client* client, Channel* channel)

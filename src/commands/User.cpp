@@ -24,25 +24,21 @@ void User::execute(Client* client, std::string arguments)
     }
     else
     {
-        //Verification de la presence de tous les arguments.
         size_t pos = arguments.find(':');
         if (splittedArgs[0].empty() || pos == std::string::npos) 
         {
             std::cerr << "Error: Invalid USER command syntax.\n";
             return;
         }
-        //Extraction complete du realName.
         std::string realName = arguments.substr(pos + 1, arguments.find(CRLF));
 
-        //Assignations des bonnes valeurs
         client->setUsername(splittedArgs[0]);
         client->setRealname(realName);
 
-        //Gestion des etats de login
         if (client->getState() == NOT_REGISTERED)
         {
             client->setState(WAITING_FOR_NICK); 
-            client->reply("NOTICE * :Please specify your nickname using the NICK command");
+            client->userReply(NOTICE_MISS_NICKNAME());
         }
         else if (client->getState() == WAITING_FOR_USER)
             client->setState(REGISTERED);

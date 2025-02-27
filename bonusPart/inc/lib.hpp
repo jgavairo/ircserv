@@ -73,8 +73,9 @@
 #define NOTICE_OPERATOR_REMOVED(prefix, channel, param) (":" + prefix + " NOTICE " + channel + " :Mode -o " + param + " has been unset")
 #define NOTICE_USER_LIMIT_SET(prefix, channel, param) (":" + prefix + " NOTICE " + channel + " :Mode +l " + param + " has been set")
 #define NOTICE_USER_LIMIT_UNSET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode -l has been unset")
+#define NOTICE_MISS_NICKNAME() ("Please specify your nickname using the NICK command")
+#define NOTICE_PASS_OK() ("Password is OK")
 #define NOTICE_USER_LIMIT_NO_SET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode l is not set")
-
 #define NOTICE_BOT_ALREADY_PRESENT(prefix, channel) (":" + prefix + " NOTICE " + channel + " :The bot is already in this channel")
 #define NOTICE_BOT_NOT_FOUND(prefix, channel) (":" + prefix + " NOTICE " + channel + " :The bot is not found")
 #define NOTICE_BOT_NOSUCHCHANNEL(prefix, channel) (":" + prefix + " NOTICE " + channel + " :No such channel")

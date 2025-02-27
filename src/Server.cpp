@@ -25,11 +25,8 @@ void Server::signalCallback(int signum)
 
 Server::~Server()
 {
-    // Fermer le socket serveur
     if (_fd >= 0)
         close(_fd);
-
-    // Supprimer les clients
     for (std::map<int, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
         if (it->second) 
         {
@@ -38,8 +35,6 @@ Server::~Server()
         }
     }
     _clients.clear();
-
-    // Supprimer les channels
     for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it) 
     {
         if (it->second)
@@ -47,6 +42,7 @@ Server::~Server()
     }
     _channels.clear();
     _instance = NULL;
+
 }
 
 std::map<std::string, Channel*>& Server::getChannels()
@@ -69,13 +65,11 @@ const std::string& Server::getPassword() const { return _password; }
 
 void Server::removeEmptyChannel(const std::string& name) 
 {
-    // Recherchez le canal par son nom
     std::map<std::string, Channel*>::iterator it = _channels.find(name);
     if (it != _channels.end())
     {
-        // Vérifiez si le canal est vide
-        if (it->second->isEmpty()) {
-            // Supprimez l'entrée du canal de la liste
+        if (it->second->isEmpty()) 
+        {
             delete it->second;
             _channels.erase(it);
         }
@@ -98,19 +92,16 @@ void Server::initialisation(int argc, char**argv)
         close(_fd);
         throw std::runtime_error("Initialisation: FAIL (setsockopt failed)");
     }
-
     fcntl(_fd, F_SETFL, O_NONBLOCK);
-    //initialisation adress
+
     std::memset(&_server_adress, 0, sizeof(_server_adress));
     _server_adress.sin_family = AF_INET;
     _server_adress.sin_addr.s_addr = htonl(INADDR_ANY);
     _server_adress.sin_port = htons(_port);
 
-    //associer le socket a la structure stockant l'adresse IP et le port
     if (bind(_fd, (sockaddr*)&_server_adress, sizeof(_server_adress)) < 0)
         throw (std::runtime_error("Initialisation: FAIL (bind failed)"));
     
-    //mettre le socket en mode ecoute
     if (listen(_fd, MAX_CLIENTS) < 0)
         throw (std::runtime_error("Initialisation: FAIL (listen failed)"));
     std::cout << "Initialisation: OK" << std::endl;
@@ -156,45 +147,71 @@ void Server::receiveNewSignal(size_t& i)
     ssize_t bytes_received = recv(_fds[i].fd, buffer, sizeof(buffer) - 1, 0);
     int saved_errno = errno;
 
-    if (bytes_received == 0)
+    if (bytes_received <= 0)
     {
-        //deconnexion du client
-        std::cout << "client has disconnected. fd: " << _fds[i].fd << std::endl;
-        close(_fds[i].fd);
-        if (_clients.find(_fds[i].fd) != _clients.end()) 
-        {
-            delete _clients[_fds[i].fd];  // Libérer la mémoire
-            _clients[_fds[i].fd] = NULL;  // Marquer comme supprimé
-            _clients.erase(_fds[i].fd);   // Retirer de la map
-        }
-        _fds.erase(_fds.begin() + i);
-        i--;
-    }
-    else if (bytes_received < 0)
-    {
-        //erreur
-        if (saved_errno == EWOULDBLOCK || errno == EAGAIN)
-            return ;
-        std::cout << "Error: impossible to reading from client, " << strerror(errno) << std::endl;
-        close(_fds[i].fd);
-        if (_clients.find(_fds[i].fd) != _clients.end()) 
-        {
-            delete _clients[_fds[i].fd];  // Libérer la mémoire
-            _clients[_fds[i].fd] = NULL;  // Marquer comme supprimé
-            _clients.erase(_fds[i].fd);   // Retirer de la map
-        }
-        _fds.erase(_fds.begin() + i);
-        i--;
-    }
-    else
-    {
-        //OK
-        buffer[bytes_received] = '\0';
-        std::string input(buffer);
+        if (bytes_received == 0)
+            std::cout << "client has disconnected. fd: " << _fds[i].fd << std::endl;
+        else if (saved_errno == EWOULDBLOCK || saved_errno == EAGAIN)
+            return;
+        else
+            std::cout << "Error: impossible to reading from client, " << strerror(saved_errno) << std::endl;
 
-        // std::cout << "New message received from fd[" << _fds[i].fd << "] : {" << input << "}" << std::endl;
-        std::vector<std::string> commandLines = _parser.splitByCRLF(input);
-        handleCommands(_clients[_fds[i].fd], commandLines);
+        close(_fds[i].fd);
+        if (_clients.find(_fds[i].fd) != _clients.end()) 
+        {
+            delete _clients[_fds[i].fd];
+            _clients.erase(_fds[i].fd);
+        }
+        _fds.erase(_fds.begin() + i);
+        i--;
+        return;
+    }
+    buffer[bytes_received] = '\0';
+    std::string input(buffer);
+    
+    if (_clients.find(_fds[i].fd) == _clients.end())
+        return;
+    
+    Client* client = _clients[_fds[i].fd];
+    
+    client->appendToBuffer(input);
+
+    std::string& clientBuffer = client->getBuffer();
+    
+    size_t pos = clientBuffer.find("\r\n");
+    std::vector<std::string> commandsToProcess;
+    
+    while (pos != std::string::npos) 
+    {
+        std::string completeCommand = clientBuffer.substr(0, pos);
+        if (!completeCommand.empty())
+            commandsToProcess.push_back(completeCommand);
+        
+        clientBuffer = clientBuffer.substr(pos + 2);
+        
+        pos = clientBuffer.find("\r\n");
+    }
+    pos = clientBuffer.find("\n");
+    while (pos != std::string::npos && pos > 0 && clientBuffer[pos-1] != '\r') 
+    {
+        std::string completeCommand = clientBuffer.substr(0, pos);
+        if (!completeCommand.empty())
+            commandsToProcess.push_back(completeCommand);
+        clientBuffer = clientBuffer.substr(pos + 1);
+        pos = clientBuffer.find("\n");
+    }
+    
+    if (!commandsToProcess.empty())
+    {
+        handleCommands(client, commandsToProcess);
+        if (_clients.find(_fds[i].fd) == _clients.end())
+            return;
+    }
+    
+    if (clientBuffer.size() > 4096)
+    {
+        std::cout << "Warning: Client buffer overflow, truncating. fd: " << _fds[i].fd << std::endl;
+        clientBuffer = clientBuffer.substr(0, 4096);
     }
 }
 
@@ -240,26 +257,22 @@ void Server::run()
         }
         for (size_t i = 0; i < _fds.size(); ++i)
         {
-            //nouveaux clients
             if (_fds[i].fd == _fd && (_fds[i].revents & POLLIN))
             {
                 if (addNewClient() == -1)
                     continue;
             }
-            //messages entrants
             else if (_fds[i].revents & POLLIN)
                 receiveNewSignal(i);
         }
     }
-        // Cleanup avant de quitter
-        std::cout << "Closing all connections..." << std::endl;
-    
-        // Fermer toutes les connexions client avant de terminer
-        for (size_t i = 1; i < _fds.size(); ++i)
-        {
-            if (_fds[i].fd >= 0)
-                close(_fds[i].fd);
-        }
-        _fds.clear();
-        std::cout << "Server shutdown complete." << std::endl;
+    std::cout << "Closing all connections..." << std::endl;
+
+    for (size_t i = 1; i < _fds.size(); ++i)
+    {
+        if (_fds[i].fd >= 0)
+            close(_fds[i].fd);
+    }
+    _fds.clear();
+    std::cout << "Server shutdown complete." << std::endl;
 }

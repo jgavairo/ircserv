@@ -35,6 +35,7 @@ const std::string& Client::getPassword() const { return _password; }
 const std::string& Client::getUsername() const { return _username; }
 const std::string& Client::getNickname() const { return _nickname; }
 ClientState Client::getState() const { return _state; }
+std::string& Client::getBuffer() { return _buffer; }
 
 //setters
 void Client::setNickname(const std::string& nickname) { _nickname = nickname; }
@@ -42,8 +43,10 @@ void Client::setUsername(const std::string& username) { _username = username; }
 void Client::setPassword(const std::string& password) { _password = password; }
 void Client::setRealname(const std::string& realname) { _realname = realname; }
 void Client::setState(ClientState state) { _state = state; }
+void Client::appendToBuffer(const std::string& data) { _buffer += data; }
 
 bool Client::isAuthenticated() { return _authenticated; }
+void Client::clearBuffer() { _buffer.clear(); }
 
 void Client::reply(const std::string& reply)
 {
@@ -82,7 +85,6 @@ std::string Client::getPrefix() const
 void Client::write(const std::string& message)
 {
     std::string finalMessage = message + CRLF;
-    // std::cout << _nickname << message << std::endl;
     if (send(_fd, finalMessage.c_str(), finalMessage.length(), 0) < 0)
         throw (std::runtime_error("writing message from client failed"));
 }

@@ -49,7 +49,4 @@ void Invite::execute(Client* client, std::string arguments)
     }
     client->reply(ERR_NOSUCHNICK(client->getNickname(), nickname));
     return ;
-    
-    std::cout << "Channel: [" << channel << "]" << std::endl;
-    std::cout << "Nickname: [" << nickname << "]" << std::endl;
 }

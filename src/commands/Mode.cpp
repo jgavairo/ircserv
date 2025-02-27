@@ -17,33 +17,35 @@ void Mode::execute(Client* client, std::string arguments)
     std::string channelName, mode, param;
     iss >> channelName >> mode >> param;
 
-    if (channelName.empty())//channelName ou mode est vide
+    if (channelName.empty())
     {
-        client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "MODE"));return;
+        client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "MODE"));
+        return;
     }
 
-    Server* server = Server::getInstance();//recuperer l'instance du serveur
-    std::map<std::string, Channel*>& channels = server->getChannels();//recuperer la liste des channels
+    Server* server = Server::getInstance();
+    std::map<std::string, Channel*>& channels = server->getChannels();
 
-    if (channels.find(channelName) == channels.end())//channelName n'existe pas
+    if (channels.find(channelName) == channels.end())
     {
-        client->reply(ERR_NOSUCHCHANNEL(client->getNickname(), channelName));return;
+        client->reply(ERR_NOSUCHCHANNEL(client->getNickname(), channelName));
+        return;
     }
 
-    Channel* channel = channels[channelName];//recuperer le channel
-    // Si aucun mode n'est spécifié, retourner les modes actuels du canal
+    Channel* channel = channels[channelName];
+
     if (mode.empty())
     {
         std::string currentModes = channel->getAllModes();
         client->reply(RPL_CHANNELMODEIS(client->getNickname(), channelName, currentModes));
         return;
     }
-    if (!channel->isOperator(client))//Arret si le client n'est pas operateur
+    if (!channel->isOperator(client))
     {
-        client->reply(ERR_CHANOPRIVSNEEDED(client->getNickname(), channelName));return;
+        client->reply(ERR_CHANOPRIVSNEEDED(client->getNickname(), channelName));
+        return;
     }
-    // Appliquer les changements de mode au canal
-    if (mode == "+i")//channel sur invitation uniquement
+    if (mode == "+i")
         channel->setInviteOnly(true, client, channel, channelName);
     else if (mode == "-i")
         channel->setInviteOnly(false, client, channel, channelName);
@@ -51,15 +53,17 @@ void Mode::execute(Client* client, std::string arguments)
         channel->setTopicRestricted(true, client, channel, channelName);
     else if (mode == "-t")
         channel->setTopicRestricted(false, client, channel, channelName);
-    else if (mode == "+k")//check les cas a gerer en bas
+    else if (mode == "+k")
     {
-        if (param.empty()) // Vérifier si le mot de passe est vide
+        if (param.empty())
         {
-            client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "MODE"));return;
+            client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), mode));
+            return;
         }
         if (param[0] == '#')
         {
-            client->reply(ERR_PASSWDMISMATCH(client->getNickname()));return;
+            client->reply(ERR_PASSWDMISMATCH(client->getNickname()));
+            return;
         }
         channel->setPassword(param);
         channel->broadcast(NOTICE_PASSWORD_SET(client->getNickname(), channelName), NULL);
@@ -71,6 +75,11 @@ void Mode::execute(Client* client, std::string arguments)
     }
     else if (mode == "+o")
     {
+        if (param.empty())
+        {
+            client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "MODE +o"));
+            return;
+        }
         channel->addOperator(param);
         channel->broadcast(NOTICE_OPERATOR_ADDED(client->getNickname(), channelName, param), NULL);
         std::string namesList;
@@ -98,7 +107,9 @@ void Mode::execute(Client* client, std::string arguments)
         for (size_t i = 0; i < clients.size(); ++i) 
         {
             if (!namesList.empty()) 
+            {
                 namesList += " ";
+            }
             if (channels[channelName]->isOperatorByName(clients[i]))
                 namesList += "@" + clients[i];
             else
@@ -109,14 +120,15 @@ void Mode::execute(Client* client, std::string arguments)
     }
     else if (mode == "+l")
     {
-        if (param.empty()) // Vérifier si le mot de passe est vide
+        if (param.empty())
         {
-            client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "MODE"));return;
+            client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "MODE +l"));
+            return ;
         }
         size_t newLimit = std::atoi(param.c_str());
-        if (newLimit < channel->getUserCount()) // Vérifier si la nouvelle limite est inférieure au nombre actuel d'utilisateurs
+        if (newLimit < channel->getUserCount())
         {
-            client->userReply(NOTICE_CANNOTSETLIMIT(client->getPrefix(), channelName));
+            client->reply(ERR_CANNOTSETLIMIT(client->getNickname(), channelName));
             return;
         }
         channel->setUserLimit(newLimit);
@@ -129,16 +141,8 @@ void Mode::execute(Client* client, std::string arguments)
     }
     else
     {
-        client->reply(ERR_UNKNOWNMODE(client->getNickname(), mode));return;
+        client->reply(ERR_UNKNOWNMODE(client->getNickname(), mode));
+        return;
     }
-    //envoyer le message de changement de mode
     channel->broadcast(":" + client->getNickname() + " MODE " + channelName + " " + mode + " " + param, client);
 }
-
-//Pour +k, cas a gerer : 
-//si le mot de passe commence par #
-//si rien nest entrer apres +k (cela renvient a -k)
-
-//mode +l sans argument reply pas bon GARBAGE
-//mode +bad char reply pas bon GARBAGE
-//mode +k sans argument reply dans serveur au lieu de dans le channel pas bon

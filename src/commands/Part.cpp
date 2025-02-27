@@ -16,12 +16,14 @@ void Part::execute(Client* client, std::string arguments)
     Server* server = Server::getInstance();
     std::map<std::string, Channel*>& channels = server->getChannels();
 
-    //Split des noms de channels par virgule (RFC 1459)
     std::string channelName, partMessage, target;
-    
+
     size_t pos = arguments.find(':');
     if (pos != std::string::npos)
+    {
         partMessage = arguments.substr(pos, arguments.size());
+        partMessage.erase(0, channelName.find_first_not_of(" :"));
+    }
     channelName = arguments.substr(0, pos - 1);
     std::istringstream iss(channelName);
     std::cout << "channelName: " << channelName << std::endl;
@@ -34,7 +36,6 @@ void Part::execute(Client* client, std::string arguments)
 
     while (std::getline(iss, channelName, ','))
     {
-        //Supprimer les espaces éventuels autour du nom du canal
         channelName.erase(0, channelName.find_first_not_of(" \t"));
         channelName.erase(channelName.find_last_not_of(" \t") + 1);
 
