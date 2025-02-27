@@ -33,10 +33,10 @@ public:
     size_t  getUserLimit() const;
 
     void setTopic(const std::string& newTopic);
-    void setTopicRestricted(bool topicRestricted, Client* client, Channel* channel, std::string channelName);
-    void setInviteOnly(bool inviteOnly, Client* client, Channel* channel, std::string channelName);
-    void setPassword(const std::string& password);
-    void setUserLimit(int limit);
+    void setTopicRestricted(bool topicRestricted, Client* client, Channel* channel);
+    void setInviteOnly(bool inviteOnly, Client* client, Channel* channel);
+    void setPassword(const std::string& password, Client* client, Channel* channel);
+    void setUserLimit(int limit, Client* client, Channel* channel);
     void setInitialOperator(Client* client);
     
     void removeInvite(const std::string& nickname);

@@ -63,6 +63,7 @@
 #define NOTICE_CANNOTSETLIMIT(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Cannot set limit lower than current users")
 #define NOTICE_INVITE_ONLY_SET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode +i has been set")
 #define NOTICE_INVITE_ONLY_UNSET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode -i has been unset")
+
 #define NOTICE_TOPIC_RESTRICTED_SET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode +t has been set")
 #define NOTICE_TOPIC_RESTRICTED_UNSET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode -t has been unset")
 #define NOTICE_PASSWORD_SET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode +k has been set")
