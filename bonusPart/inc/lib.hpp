@@ -56,11 +56,9 @@
 #define RPL_LISTEND(client) "323 " + client + " :End of /LIST"
 #define RPL_CHANNELMODEIS(nickname, channel, modes) "324 " + nickname + " " + channel + " " + modes
 #define RPL_KICK(kicker, channel, user, comment) ":" + kicker + " KICK " + channel + " " + user + " :" + comment
-#define RPL_MODE_ALREADY_ACTIVE(client, channel, mode) "MODE " + channel + " " + mode + " :Mode is already active"
 #define RPL_TOPIC_ALREADY_SET(client, channel) "332 " + client + " " + channel + " :Topic is already set"
 
-
-
+#define NOTICE_MODE_ALREADY_ACTIVE(prefix, channel, mode) (":" + prefix + " NOTICE " + channel + " :Mode +" + mode + " is already set")
 #define PART_MESSAGE(clientPrefix, channel, reason) ":" + clientPrefix + " PART " + channel + (reason.empty() ? "" : " :" + reason)
 #define NOTICE_INVITE_ONLY_SET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode +i has been set")
 #define NOTICE_INVITE_ONLY_UNSET(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Mode -i has been unset")

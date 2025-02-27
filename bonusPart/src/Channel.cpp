@@ -111,7 +111,8 @@ void Channel::setInviteOnly(bool inviteOnly, Client* client, Channel* channel, s
 {
     if (inviteOnly && _allModes.find('i') != std::string::npos)
     {
-        client->reply(RPL_MODE_ALREADY_ACTIVE(client->getNickname(), channelName, "i"));
+        std::cout << "Channel " << _name << " is already INVITE only." << std::endl;
+        client->userReply(NOTICE_MODE_ALREADY_ACTIVE(client->getNickname(), channelName, "i"));
         return;
     }
     _inviteOnly = inviteOnly;
