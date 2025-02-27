@@ -234,7 +234,7 @@ size_t Channel::getUserLimit() const
     return _userLimit;
 }
 
-size_t Channel::getUserCount() const
+int Channel::getUserCount() const
 {
     return _clients.size();
 }

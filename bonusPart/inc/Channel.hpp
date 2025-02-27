@@ -29,7 +29,7 @@ public:
     const std::string getTopic() const;
     const std::string& getPassword() const;
     std::string getAllModes() const;
-    size_t  getUserCount() const;
+    int  getUserCount() const;
     size_t  getUserLimit() const;
 
     void setTopic(const std::string& newTopic);
