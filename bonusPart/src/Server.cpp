@@ -228,7 +228,14 @@ void Server::receiveNewSignal(size_t& i)
     }
     
     if (!commandsToProcess.empty())
+    {
         handleCommands(client, commandsToProcess);
+        if (_clients.find(_fds[i].fd) == _clients.end())
+        {
+            // Le client a été supprimé par une commande, ne pas continuer
+            return;
+        }
+    }
     
     if (clientBuffer.size() > 4096)
     {
