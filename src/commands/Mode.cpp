@@ -46,13 +46,13 @@ void Mode::execute(Client* client, std::string arguments)
         return;
     }
     if (mode == "+i")
-        channel->setInviteOnly(true, client, channel, channelName);
+        channel->setInviteOnly(true, client, channel);
     else if (mode == "-i")
-        channel->setInviteOnly(false, client, channel, channelName);
+        channel->setInviteOnly(false, client, channel);
     else if (mode == "+t")
-        channel->setTopicRestricted(true, client, channel, channelName);
+        channel->setTopicRestricted(true, client, channel);
     else if (mode == "-t")
-        channel->setTopicRestricted(false, client, channel, channelName);
+        channel->setTopicRestricted(false, client, channel);
     else if (mode == "+k")
     {
         if (param.empty())
@@ -65,13 +65,12 @@ void Mode::execute(Client* client, std::string arguments)
             client->reply(ERR_PASSWDMISMATCH(client->getNickname()));
             return;
         }
-        channel->setPassword(param);
+        channel->setPassword(param, client, channel);
         channel->broadcast(NOTICE_PASSWORD_SET(client->getNickname(), channelName), NULL);
     }
     else if (mode == "-k")
     {
-        channel->setPassword("");
-        channel->broadcast(NOTICE_PASSWORD_UNSET(client->getNickname(), channelName), NULL);
+        channel->setPassword("", client, channel);
     }
     else if (mode == "+o")
     {
@@ -100,6 +99,11 @@ void Mode::execute(Client* client, std::string arguments)
     }
     else if (mode == "-o")
     {
+        if (param.empty())
+        {
+            client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "MODE -o"));
+            return;
+        }
         channel->removeOperator(param);
         channel->broadcast(NOTICE_OPERATOR_REMOVED(client->getNickname(), channelName, param), NULL);
         std::string namesList;
@@ -131,14 +135,11 @@ void Mode::execute(Client* client, std::string arguments)
             client->reply(ERR_CANNOTSETLIMIT(client->getNickname(), channelName));
             return;
         }
-        channel->setUserLimit(newLimit);
-        channel->broadcast(NOTICE_USER_LIMIT_SET(client->getNickname(), channelName, param), NULL);
+        channel->setUserLimit(newLimit, client, channel);
+        channel->broadcast(NOTICE_USER_LIMIT_SET(client->getNickname(), channel->getName(), param), NULL);
     }
     else if (mode == "-l")
-    {
-        channel->setUserLimit(0);
-        channel->broadcast(NOTICE_USER_LIMIT_UNSET(client->getNickname(), channelName), NULL);
-    }
+        channel->setUserLimit(0, client, channel);
     else
     {
         client->reply(ERR_UNKNOWNMODE(client->getNickname(), mode));

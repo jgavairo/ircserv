@@ -45,8 +45,7 @@ void Mode::execute(Client* client, std::string arguments)
         client->reply(ERR_CHANOPRIVSNEEDED(client->getNickname(), channelName));
         return;
     }
-    // Appliquer les changements de mode au canal
-    if (mode == "+i")//channel sur invitation uniquement
+    if (mode == "+i")
         channel->setInviteOnly(true, client, channel);
     else if (mode == "-i")
         channel->setInviteOnly(false, client, channel);
@@ -54,7 +53,7 @@ void Mode::execute(Client* client, std::string arguments)
         channel->setTopicRestricted(true, client, channel);
     else if (mode == "-t")
         channel->setTopicRestricted(false, client, channel);
-    else if (mode == "+k")//check les cas a gerer en bas
+    else if (mode == "+k")
     {
         if (param.empty())
         {
@@ -140,9 +139,7 @@ void Mode::execute(Client* client, std::string arguments)
         channel->broadcast(NOTICE_USER_LIMIT_SET(client->getNickname(), channel->getName(), param), NULL);
     }
     else if (mode == "-l")
-    {
         channel->setUserLimit(0, client, channel);
-    }
     else
     {
         client->reply(ERR_UNKNOWNMODE(client->getNickname(), mode));
