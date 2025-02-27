@@ -100,6 +100,11 @@ void Mode::execute(Client* client, std::string arguments)
     }
     else if (mode == "-o")
     {
+        if (param.empty())
+        {
+            client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "MODE -o"));
+            return;
+        }
         channel->removeOperator(param);
         channel->broadcast(NOTICE_OPERATOR_REMOVED(client->getNickname(), channelName, param), NULL);
         std::string namesList;
