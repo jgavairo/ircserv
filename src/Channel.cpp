@@ -93,19 +93,19 @@ void Channel::removeClient(Client* client)
 }
 
 // Implémentation des méthodes de gestion des modes
-void Channel::setInviteOnly(bool inviteOnly, Client* client, Channel* channel, std::string channelName)
+void Channel::setInviteOnly(bool inviteOnly, Client* client, Channel* channel)
 {
     if (inviteOnly && _allModes.find('i') != std::string::npos)
     {
-        std::cout << "Channel " << _name << " is already INVITE only." << std::endl;
-        client->userReply(NOTICE_MODE_ALREADY_ACTIVE(client->getNickname(), channelName, "i"));
+        client->userReply(NOTICE_MODE_ALREADY_ACTIVE(client->getNickname(), channel->getName(), "i"));
         return;
     }
     _inviteOnly = inviteOnly;
 
     if (inviteOnly)
     {
-        channel->broadcast(NOTICE_INVITE_ONLY_SET(client->getNickname(), channelName), NULL);
+        channel->broadcast(NOTICE_INVITE_ONLY_SET(client->getNickname(), channel->getName()), NULL);
+        std::cout << "[+i] Channel " << _name << " est que sur invitation." << std::endl;
         _allModes += "i";
     }
     else{
@@ -113,8 +113,8 @@ void Channel::setInviteOnly(bool inviteOnly, Client* client, Channel* channel, s
         size_t pos = _allModes.find("i");
         if (pos != std::string::npos)
         {
-            channel->broadcast(NOTICE_INVITE_ONLY_UNSET(client->getNickname(), channelName), NULL);
-            _allModes.erase(_allModes.find("i"), 1);
+            channel->broadcast(NOTICE_INVITE_ONLY_UNSET(client->getNickname(), channel->getName()), NULL);
+            _allModes.erase(pos, 1);
         }
         else
             client->userReply(NOTICE_INVITE_NO_SET(client->getNickname(), channel->getName()));
@@ -126,23 +126,29 @@ bool Channel::isInviteOnly() const
     return _inviteOnly;
 }
 
-void Channel::setTopicRestricted(bool topicRestricted, Client* client, Channel* channel, std::string channelName)
+void Channel::setTopicRestricted(bool topicRestricted, Client* client, Channel* channel)
 {
     if (topicRestricted && _allModes.find('t') != std::string::npos)
     {
-        client->reply(RPL_TOPIC_ALREADY_SET(client->getNickname(), "t"));
+        client->userReply(NOTICE_MODE_ALREADY_ACTIVE(client->getNickname(), channel->getName(), "t"));
         return;
     }
     _topicRestricted = topicRestricted;
     if (topicRestricted){
-        channel->broadcast(NOTICE_TOPIC_RESTRICTED_SET(client->getNickname(), channelName), NULL);
+        channel->broadcast(NOTICE_TOPIC_RESTRICTED_SET(client->getNickname(), channel->getName()), NULL);
         std::cout << "[+t] Channel " << _name << " is now topic restricted." << std::endl;
         _allModes += "t";
     }
     else{
-        channel->broadcast(NOTICE_TOPIC_RESTRICTED_UNSET(client->getNickname(), channelName), NULL);
         std::cout << "[-t] Channel " << _name << " is no longer topic restricted. " << std::endl;
-        _allModes.erase(_allModes.find("t"), 1);
+        size_t pos = _allModes.find("t");
+        if (pos != std::string::npos)
+        {
+            channel->broadcast(NOTICE_TOPIC_RESTRICTED_UNSET(client->getNickname(), channel->getName()), NULL);    
+            _allModes.erase(_allModes.find("t"), 1);
+        }
+        else
+            client->userReply(NOTICE_TOPIC_NO_SET(client->getNickname(), channel->getName()));
     }
 }
 
@@ -151,7 +157,7 @@ bool Channel::isTopicRestricted() const
     return _topicRestricted;
 }
 
-void Channel::setPassword(const std::string& password)
+void Channel::setPassword(const std::string& password, Client* client, Channel* channel)
 {
      _password = password;
     if (!password.empty()){
@@ -160,7 +166,14 @@ void Channel::setPassword(const std::string& password)
     }
     else{
         std::cout << "[-k] Channel " << _name << " n'est plus proteger par un mot de passe " << std::endl;
-        _allModes.erase(_allModes.find("k"), 1);
+        size_t pos = _allModes.find("k");
+        if (pos != std::string::npos)
+        {
+            channel->broadcast(NOTICE_PASSWORD_UNSET(client->getNickname(), channel->getName()), NULL);
+            _allModes.erase(_allModes.find("k"), 1);
+        }
+        else
+            client->userReply(NOTICE_PASSWORD_NO_SET(client->getNickname(), channel->getName()));
     }
 }
 
@@ -191,7 +204,7 @@ bool Channel::isOperatorByName(std::string client) const
     return _operators.find(client) != _operators.end();
 }
 
-void Channel::setUserLimit(int limit)
+void Channel::setUserLimit(int limit, Client* client, Channel* channel)
 {
     _userLimit = limit;
     if (limit > 0){
@@ -199,7 +212,14 @@ void Channel::setUserLimit(int limit)
         _allModes += "l";
     }
     else{
-        _allModes.erase(_allModes.find("l"), 1);
+        size_t pos = _allModes.find("l");
+        if (pos != std::string::npos)
+        {
+            channel->broadcast(NOTICE_USER_LIMIT_UNSET(client->getNickname(), channel->getName()), NULL);
+            _allModes.erase(_allModes.find("l"), 1);
+        }
+        else
+            client->userReply(NOTICE_USER_LIMIT_NO_SET(client->getNickname(), channel->getName()));
         std::cout << "[-l] Channel " << _name << " na plus de limite dutilisateur" << std::endl;
 
     }

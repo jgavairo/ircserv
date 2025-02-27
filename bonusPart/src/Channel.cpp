@@ -118,7 +118,7 @@ void Channel::setInviteOnly(bool inviteOnly, Client* client, Channel* channel)
         if (pos != std::string::npos)
         {
             channel->broadcast(NOTICE_INVITE_ONLY_UNSET(client->getNickname(), channel->getName()), NULL);
-            _allModes.erase(_allModes.find("i"), 1);
+            _allModes.erase(pos, 1);
         }
         else
             client->userReply(NOTICE_INVITE_NO_SET(client->getNickname(), channel->getName()));

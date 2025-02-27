@@ -2,6 +2,9 @@ NAME = ircserv
 BONUS_SERVER_NAME = ircserv_bonus
 BONUS_BOT_NAME = ircbot
 
+SERVER_PORT = 6667
+SERVER_PASSWORD = 12
+
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 STD_CXXFLAGS = $(CXXFLAGS) -I inc
@@ -63,6 +66,9 @@ BONUS_SERVER_SRCS = $(BONUS_SRCDIR)/main.cpp $(BONUS_SRCDIR)/Client.cpp $(BONUS_
 
 BONUS_BOT_SRCS = $(BONUS_SRCDIR)/ircBot/main.cpp $(BONUS_SRCDIR)/ircBot/IrcBot.cpp
 
+# Construire les chemins complets vers les fichiers source
+FULL_SRCS = $(addprefix $(SRCDIR)/,$(SRCS))
+
 # Trouver tous les en-têtes
 HEADERS = $(wildcard inc/*.hpp) $(wildcard inc/*/*.hpp)
 BONUS_HEADERS = $(wildcard bonusPart/inc/*.hpp) $(wildcard bonusPart/inc/*/*.hpp)
@@ -84,10 +90,39 @@ export BONUS_COMPILED_FILES := 0
 .SILENT:
 
 all:
-	@if $(MAKE) --no-print-directory --question $(NAME); then \
-		echo "$(GREEN)Rien à faire pour '$(NAME)'. Déjà compilé.$(RESET)"; \
+	@need_compile=false; \
+	for src in $(FULL_SRCS); do \
+		obj=$$(echo $$src | sed "s|$(SRCDIR)|$(OBJDIR)|" | sed "s|.cpp|.o|"); \
+		if [ ! -f "$$obj" ] || [ "$$src" -nt "$$obj" ]; then \
+			need_compile=true; \
+			break; \
+		fi; \
+	done; \
+	if [ "$$need_compile" = "false" ]; then \
+		for header in $(HEADERS); do \
+			for obj in $(OBJS); do \
+				if [ ! -f "$$obj" ] || [ "$$header" -nt "$$obj" ]; then \
+					need_compile=true; \
+					break 2; \
+				fi; \
+			done; \
+		done; \
+	fi; \
+	if [ "$$need_compile" = "false" ] && [ -f $(NAME) ]; then \
+		for obj in $(OBJS); do \
+			if [ "$$obj" -nt "$(NAME)" ]; then \
+				need_compile=true; \
+				break; \
+			fi; \
+		done; \
 	else \
+		need_compile=true; \
+	fi; \
+	if [ "$$need_compile" = "true" ]; then \
+		echo "$(GREEN)Compilation du serveur IRC standard...$(RESET)"; \
 		$(MAKE) --no-print-directory $(NAME); \
+	else \
+		echo "$(GREEN)Rien à faire pour '$(NAME)'. Déjà compilé.$(RESET)"; \
 	fi
 
 # Créer un fichier timestamp pour suivre les changements des en-têtes
@@ -104,16 +139,9 @@ $(BONUS_OBJDIR)/.headers_timestamp: $(BONUS_HEADERS)
 -include $(wildcard $(BONUS_DEPDIR)/*.d)
 -include $(wildcard $(BONUS_DEPDIR)/*/*.d)
 
-$(NAME): $(OBJDIR)/.headers_timestamp
-	@if $(MAKE) --no-print-directory --question $(OBJS); then \
-		echo "$(GREEN)Rien à faire pour '$(NAME)'. Déjà compilé.$(RESET)"; \
-	else \
-		echo "$(GREEN)Compilation du serveur IRC standard...$(RESET)"; \
-		export STD_COMPILED_FILES=0; \
-		$(MAKE) --no-print-directory $(OBJS); \
-		$(CXX) $(STD_CXXFLAGS) -o $@ $(OBJS); \
-		echo "\n$(GREEN)Compilation terminée : $(NAME) est prêt !$(RESET)"; \
-	fi
+$(NAME): $(OBJDIR)/.headers_timestamp $(OBJS)
+	@$(CXX) $(STD_CXXFLAGS) -o $@ $(OBJS)
+	@echo "\n$(GREEN)Compilation terminée : $(NAME) est prêt !$(RESET)"
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@mkdir -p $(dir $@)
@@ -125,14 +153,51 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@printf "] $(notdir $<)$(RESET)"
 	@$(CXX) $(STD_CXXFLAGS) -MMD -MP -c $< -o $@ -MF $(DEPDIR)/$*.d
 
-bonus: $(BONUS_OBJDIR)/.headers_timestamp
-	@if $(MAKE) --no-print-directory --question $(BONUS_SERVER_NAME) $(BONUS_BOT_NAME); then \
-		echo "$(BLUE)Rien à faire pour 'bonus'. Déjà compilé.$(RESET)"; \
+bonus:
+	@need_compile=false; \
+	for src in $(BONUS_SERVER_SRCS) $(BONUS_BOT_SRCS); do \
+		obj=$$(echo $$src | sed "s|$(BONUS_SRCDIR)|$(BONUS_OBJDIR)|" | sed "s|.cpp|.o|"); \
+		if [ ! -f "$$obj" ] || [ "$$src" -nt "$$obj" ]; then \
+			need_compile=true; \
+			break; \
+		fi; \
+	done; \
+	if [ "$$need_compile" = "false" ]; then \
+		for header in $(BONUS_HEADERS); do \
+			for obj in $(BONUS_SERVER_OBJS) $(BONUS_BOT_OBJS); do \
+				if [ ! -f "$$obj" ] || [ "$$header" -nt "$$obj" ]; then \
+					need_compile=true; \
+					break 2; \
+				fi; \
+			done; \
+		done; \
+	fi; \
+	if [ "$$need_compile" = "false" ] && [ -f $(BONUS_SERVER_NAME) ] && [ -f $(BONUS_BOT_NAME) ]; then \
+		for obj in $(BONUS_SERVER_OBJS); do \
+			if [ "$$obj" -nt "$(BONUS_SERVER_NAME)" ]; then \
+				need_compile=true; \
+				break; \
+			fi; \
+		done; \
+		if [ "$$need_compile" = "false" ]; then \
+			for obj in $(BONUS_BOT_OBJS); do \
+				if [ "$$obj" -nt "$(BONUS_BOT_NAME)" ]; then \
+					need_compile=true; \
+					break; \
+				fi; \
+			done; \
+		fi; \
 	else \
+		need_compile=true; \
+	fi; \
+	if [ "$$need_compile" = "true" ]; then \
 		echo "$(BLUE)Compilation du serveur IRC bonus et du bot...$(RESET)"; \
+		$(MAKE) --no-print-directory $(BONUS_OBJDIR)/.headers_timestamp; \
 		export BONUS_COMPILED_FILES=0; \
 		$(MAKE) --no-print-directory $(BONUS_SERVER_NAME) $(BONUS_BOT_NAME); \
 		echo "\n$(BLUE)Compilation terminée : $(BONUS_SERVER_NAME) et $(BONUS_BOT_NAME) sont prêts !$(RESET)"; \
+	else \
+		echo "$(BLUE)Rien à faire pour 'bonus'. Déjà compilé.$(RESET)"; \
 	fi
 
 $(BONUS_SERVER_NAME): $(BONUS_SERVER_OBJS)
@@ -151,6 +216,30 @@ $(BONUS_OBJDIR)/%.o: $(BONUS_SRCDIR)/%.cpp
 	@printf "] $(notdir $<)$(RESET)"
 	@$(CXX) $(BONUS_CXXFLAGS) -MMD -MP -c $< -o $@ -MF $(BONUS_DEPDIR)/$*.d
 
+run_bonus:
+	@if [ ! -f $(BONUS_SERVER_NAME) ] || [ ! -f $(BONUS_BOT_NAME) ]; then \
+		echo "$(RED)Les exécutables n'existent pas. Veuillez d'abord les compiler avec 'make bonus'.$(RESET)"; \
+	else \
+		echo "$(GREEN)Lancement du serveur et du bot avec les paramètres $(SERVER_PORT) $(SERVER_PASSWORD)...$(RESET)"; \
+		echo "$(YELLOW)Serveur lancé en arrière-plan. Pour arrêter, utilisez 'killall $(BONUS_SERVER_NAME)'$(RESET)"; \
+		./$(BONUS_SERVER_NAME) $(SERVER_PORT) $(SERVER_PASSWORD) > server.log 2>&1 & \
+		SERVER_PID=$$!; \
+		echo "$(YELLOW)PID du serveur : $$SERVER_PID$(RESET)"; \
+		sleep 2; \
+		echo "$(YELLOW)Bot lancé en arrière-plan. Pour arrêter, utilisez 'killall $(BONUS_BOT_NAME)'$(RESET)"; \
+		./$(BONUS_BOT_NAME) $(SERVER_PORT) $(SERVER_PASSWORD) > bot.log 2>&1 & \
+		BOT_PID=$$!; \
+		echo "$(YELLOW)PID du bot : $$BOT_PID$(RESET)"; \
+		echo "$(GREEN)Les logs sont disponibles dans server.log et bot.log$(RESET)"; \
+	fi
+
+# Ajouter cette cible pour arrêter les programmes
+stop_bonus:
+	@echo "$(RED)Arrêt du serveur et du bot...$(RESET)"
+	@killall $(BONUS_SERVER_NAME) 2>/dev/null || true
+	@killall $(BONUS_BOT_NAME) 2>/dev/null || true
+	@echo "$(RED)Programmes arrêtés.$(RESET)"
+
 clean:
 	@echo "$(RED)Suppression des fichiers objets...$(RESET)"
 	@rm -rf $(OBJDIR) $(DEPDIR) $(BONUS_OBJDIR) $(BONUS_DEPDIR)
@@ -158,7 +247,7 @@ clean:
 
 fclean: clean
 	@echo "$(RED)Suppression des exécutables...$(RESET)"
-	@rm -f $(NAME) $(BONUS_SERVER_NAME) $(BONUS_BOT_NAME)
+	@rm -f $(NAME) $(BONUS_SERVER_NAME) $(BONUS_BOT_NAME) server.log bot.log
 	@echo "$(RED)Exécutables supprimés !$(RESET)"
 
 re: fclean all

@@ -56,23 +56,23 @@ void Nick::execute(Client* client, std::string arguments)
     }
 
     std::string old_nick = client->getNickname();
+    std::string old_prefix = client->getPrefix();
+
     if (client->getState() == WAITING_FOR_NICK)
     {
         client->setState(REGISTERED);
     }
     else if (client->getState() == NOT_REGISTERED)
         client->setState(WAITING_FOR_USER);
+
+        
+    for (std::map<std::string, Channel*>::iterator it = client->_channels.begin(); it != client->_channels.end(); ++it)
+        it->second->broadcast(RPL_NICK(old_prefix, new_nickname), client);
+        
+    client->write(RPL_NICK(old_prefix, new_nickname));
+    client->setNickname(new_nickname);
+    server->updateNickInChannels(old_nick, new_nickname);
+
     if (client->getState() == REGISTERED)
         client->reply(RPL_WELCOME(new_nickname));
-
-    for (std::map<std::string, Channel*>::iterator it = client->_channels.begin(); it != client->_channels.end(); ++it)
-    {
-        it->second->broadcast(RPL_NICK(client->getPrefix(), new_nickname), client);
-        std::string noticeMessage = ":" + client->getPrefix() + " NOTICE " + it->second->getName() + " :" + old_nick + " is now known as " + new_nickname;
-        it->second->broadcast(noticeMessage, client);
-    }
-
-    client->write(RPL_NICK(client->getPrefix(), new_nickname));
-    server->updateNickInChannels(old_nick, new_nickname);
-    client->setNickname(new_nickname);
 }
