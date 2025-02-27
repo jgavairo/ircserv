@@ -47,6 +47,7 @@ Server::~Server()
     }
     _channels.clear();
     _instance = NULL;
+
 }
 
 std::map<std::string, Channel*>& Server::getChannels()

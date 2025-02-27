@@ -116,9 +116,15 @@ void Mode::execute(Client* client, std::string arguments)
     }
     else if (mode == "+l")
     {
+        if (param.empty())
+        {
+            client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "MODE +l"));
+            return ;
+        }
         size_t newLimit = std::atoi(param.c_str());
         if (newLimit < channel->getUserCount()) // Vérifier si la nouvelle limite est inférieure au nombre actuel d'utilisateurs
         {
+            std::cout << "ON PASSE ICI" << std::endl;
             client->reply(ERR_CANNOTSETLIMIT(client->getNickname(), channelName));
             return;
         }
