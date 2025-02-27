@@ -24,7 +24,10 @@ void Pass::execute(Client* client, std::string arguments)
     Server* server = Server::getInstance();
     
     if (client->getPassword() == server->getPassword())
+    {
+        client->userReply(NOTICE_PASS_OK());
         client->setAuth(true);
+    }
     else
     {
         client->setAuth(false);

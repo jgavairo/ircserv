@@ -31,7 +31,6 @@ void Quit::execute(Client* client, std::string arguments)
     }
 
     int clientFd = client->getFd();
-    //shutdown(clientFd, SHUT_RDWR); // Forcer la fermeture de la connexion
     server->getClients().erase(clientFd);
     close(clientFd);
     delete client;

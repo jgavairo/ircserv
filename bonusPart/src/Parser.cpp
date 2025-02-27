@@ -4,7 +4,6 @@ Parser::Parser() {}
 
 Parser::~Parser() {}
 
-// VERIFICATION DES PARAMETRES, 2 ARGUMENTS / UN PORT CONTENANT SEULEMENT DES CHIFFRES / RESPECT DES LIMITES
 void Parser::parametersChecker(int argc, char** argv, int& _port)
 {
     if (argc != 3)

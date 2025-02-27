@@ -41,7 +41,6 @@ CommandsList::CommandsList()
 
 CommandsList::~CommandsList()
 {
-    // Libérer chaque commande allouée dynamiquement
     for (std::map<std::string, ACommand*>::iterator it = _list.begin(); it != _list.end(); ++it)
     {
         delete it->second;
