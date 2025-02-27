@@ -13,12 +13,10 @@ void Kick::execute(Client* client, std::string arguments)
     Server* server = Server::getInstance();
     std::map<std::string, Channel*> serverChannels = server->getChannels();
     std::map<int, Client*> serverClients = server->getClients();
-    //recuperation de la raison
     size_t pos = arguments.find(":") + 1;
     if (pos != std::string::npos)
         reason = arguments.substr(pos, arguments.size());
     
-    //recuperation du channel et de la target
     iss >> channel;
     iss >> target;
 

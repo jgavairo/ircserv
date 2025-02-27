@@ -49,7 +49,7 @@ void Nick::execute(Client* client, std::string arguments)
     {
         if (it->second->getNickname() == new_nickname)
         {
-            std::cerr << "Nickname " << new_nickname << "has already used by client" << it->first << std::endl;
+            std::cerr << "Nickname " << new_nickname << " has already used by client" << it->first << std::endl;
             client->reply(ERR_NICKNAMEINUSE(new_nickname));
             return ;
         }

@@ -81,7 +81,6 @@ void Channel::removeClient(Client* client)
         client->leaveChannel(this);
         std::cout << "Client " << client->getNickname() << " removed from channel " << _name << std::endl;
 
-        //si le channel est vide, on le supprime
         if (_clients.empty())
         {
             std::cout << "Channel " << _name << " is now empty and will be deleted.\n";
@@ -89,29 +88,17 @@ void Channel::removeClient(Client* client)
             
             Server* server = Server::getInstance();
             server->removeEmptyChannel(_name);
-            
-            // delete this;
-        }
-        else if (_clients.size() == 1 && _clients.find("ircbot") != _clients.end())
-        {
-            removeClient(_clients["ircbot"]);
         }
     }
 }
-
-void Channel::displayClients() const
-{
-    for (std::map<std::string, Client*>::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
-        std::cout << it->first << " : " << it->second->getNickname() << std::endl;
-}
-
 
 // Implémentation des méthodes de gestion des modes
 void Channel::setInviteOnly(bool inviteOnly, Client* client, Channel* channel, std::string channelName)
 {
     if (inviteOnly && _allModes.find('i') != std::string::npos)
     {
-        client->reply(RPL_MODE_ALREADY_ACTIVE(client->getNickname(), channelName, "i"));
+        std::cout << "Channel " << _name << " is already INVITE only." << std::endl;
+        client->userReply(NOTICE_MODE_ALREADY_ACTIVE(client->getNickname(), channelName, "i"));
         return;
     }
     _inviteOnly = inviteOnly;
@@ -119,15 +106,18 @@ void Channel::setInviteOnly(bool inviteOnly, Client* client, Channel* channel, s
     if (inviteOnly)
     {
         channel->broadcast(NOTICE_INVITE_ONLY_SET(client->getNickname(), channelName), NULL);
-        std::cout << "[+i] Channel " << _name << " est que sur invitation." << std::endl;
         _allModes += "i";
     }
     else{
-        channel->broadcast(NOTICE_INVITE_ONLY_UNSET(client->getNickname(), channelName), NULL);
         std::cout << "[-i] Channel " << _name << " n'est plus sur invitation." << std::endl;
         size_t pos = _allModes.find("i");
         if (pos != std::string::npos)
+        {
+            channel->broadcast(NOTICE_INVITE_ONLY_UNSET(client->getNickname(), channelName), NULL);
             _allModes.erase(_allModes.find("i"), 1);
+        }
+        else
+            client->userReply(NOTICE_INVITE_NO_SET(client->getNickname(), channel->getName()));
     }
 }
 

@@ -50,7 +50,7 @@ void Join::execute(Client* client, std::string arguments)
         if (channels.find(channelName) == channels.end())
         {
             channels[channelName] = new Channel(channelName);
-            channels[channelName]->setInitialOperator(client); // Définir le créateur du canal comme opérateur
+            channels[channelName]->setInitialOperator(client);
         }
 
         if (channels[channelName]->getUserLimit() > 0 && (channels[channelName]->_clients.size()) >= channels[channelName]->getUserLimit())
@@ -105,5 +105,3 @@ void Join::execute(Client* client, std::string arguments)
         std::cout << "Client " << client->getFd() << " joined channel: " << channelName << std::endl;
     }
 }
-
-//LANCER SERVEUR, CONNECTER 2 CLIENTS ET LE BOT, CTRL+C LE BOT ET CTRL+C LE SERVER, BCP DE PB
