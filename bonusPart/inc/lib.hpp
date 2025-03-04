@@ -83,6 +83,7 @@
 #define NOTICE_BOT_HELP_INFO(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Type !help to see available bot commands")
 #define NOTICE_BOT_HELP_HEADER(prefix, channel) (":" + prefix + " NOTICE " + channel + " :Available commands:")
 #define NOTICE_BOT_HELP_TIME(prefix, channel) (":" + prefix + " NOTICE " + channel + " :<!time>:\t\tdisplay hour in the channel")
-#define NOTICE_BOT_HELP_PUNCHLINE(prefix, channel) (":" + prefix + " NOTICE " + channel + " :<!punchline>:\tdisplay random punchline of 42students")
+#define NOTICE_BOT_HELP_PFC(prefix, channel) (":" + prefix + " NOTICE " + channel + " :<!pierre>,<!feuille>,<!ciseaux>:\tPour jouer a pierrre feuille ciseaux")
 #define NOTICE_BOT_TIME(prefix, channel, currentTime) (":" + prefix + " NOTICE " + channel + " :Current time is: " + currentTime)
 #define NOTICE_BOT_PUNCHLINE(prefix, channel, punchline, artist) (":" + prefix + " NOTICE " + channel + " :" + punchline + " " + artist)
+#define NOTICE_BOT_PFC(prefix, channel, output, loseOrWin) (":" + prefix + " NOTICE " + channel + " :" + output + " " + loseOrWin)

@@ -60,7 +60,9 @@ BONUS_SERVER_SRCS = $(BONUS_SRCDIR)/main.cpp $(BONUS_SRCDIR)/Client.cpp $(BONUS_
 					$(BONUS_SRCDIR)/commands/Quit.cpp \
 					$(BONUS_SRCDIR)/commands/Mode.cpp \
 					$(BONUS_SRCDIR)/commands/AddBot.cpp \
-					$(BONUS_SRCDIR)/commands/BotPunchline.cpp \
+					$(BONUS_SRCDIR)/commands/BotPierre.cpp \
+					$(BONUS_SRCDIR)/commands/BotFeuille.cpp \
+					$(BONUS_SRCDIR)/commands/BotCiseaux.cpp \
 					$(BONUS_SRCDIR)/commands/BotTime.cpp \
 					$(BONUS_SRCDIR)/commands/BotHelp.cpp
 

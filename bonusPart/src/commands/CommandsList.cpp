@@ -15,7 +15,9 @@
 #include "../../inc/commands/Mode.hpp"
 #include "../../inc/commands/BotHelp.hpp"
 #include "../../inc/commands/BotTime.hpp"
-#include "../../inc/commands/BotPunchline.hpp"
+#include "../../inc/commands/BotPierre.hpp"
+#include "../../inc/commands/BotCiseaux.hpp"
+#include "../../inc/commands/BotFeuille.hpp"
 
 CommandsList::CommandsList()
 {
@@ -35,7 +37,9 @@ CommandsList::CommandsList()
     _list["MODE"] = new Mode();
 
     _list["!help"] = new BotHelp();
-    _list["!punchline"] = new BotPunchline();
+    _list["!pierre"] = new BotPierre();
+    _list["!ciseaux"] = new BotCiseaux();
+    _list["!feuille"] = new BotFeuille();
     _list["!time"] = new BotTime();
 }
 
