@@ -95,9 +95,15 @@ void Join::execute(Client* client, std::string arguments)
 
         client->write(RPL_JOIN(client->getPrefix(), channelName));
         channels[channelName]->broadcast(RPL_JOIN(client->getPrefix(), channelName), client);
-
-        client->reply(RPL_NAMREPLY(client->getNickname(), channelName, namesList));
-        client->reply(RPL_ENDOFNAMES(client->getNickname(), channelName));
+        std::map<int, Client*> clientsChannel = server->getClients();
+        for (std::map<int, Client*>::const_iterator it = clientsChannel.begin(); it != clientsChannel.end(); ++it)
+        {
+            if (it->second->searchChannel(channelName))
+            {
+                client->reply(RPL_NAMREPLY(client->getNickname(), channelName, namesList));
+                client->reply(RPL_ENDOFNAMES(client->getNickname(), channelName));
+            }
+        }
         if (!channels[channelName]->getTopic().empty())
             client->reply(RPL_TOPIC(client->getNickname(), channelName, channels[channelName]->getTopic()));
         else

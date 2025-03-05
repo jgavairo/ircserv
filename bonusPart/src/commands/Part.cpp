@@ -52,5 +52,7 @@ void Part::execute(Client* client, std::string arguments)
         }
         channels[channelName]->broadcast(PART_MESSAGE(client->getPrefix(), channelName, partMessage), NULL);
         channels[channelName]->removeClient(client);
+        if (channels[channelName]->isOperator(client))
+            channels[channelName]->removeOperator(client->getNickname());
     }
 }

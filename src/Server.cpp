@@ -173,37 +173,57 @@ void Server::receiveNewSignal(size_t& i)
         return;
     
     Client* client = _clients[_fds[i].fd];
-    
     client->appendToBuffer(input);
-
     std::string& clientBuffer = client->getBuffer();
     
-    size_t pos = clientBuffer.find("\r\n");
+    // Traiter les commandes complètes
     std::vector<std::string> commandsToProcess;
     
+    // Traiter d'abord les \r\n (standard IRC)
+    size_t pos;
+    while ((pos = clientBuffer.find("\r\n")) != std::string::npos) 
+    {
+        std::string completeCommand = clientBuffer.substr(0, pos);
+        commandsToProcess.push_back(completeCommand); // Même si vide
+        
+        clientBuffer = clientBuffer.substr(pos + 2);
+    }
+    
+    // Puis traiter les \n simples (pour netcat et autres clients)
+    pos = clientBuffer.find('\n');
     while (pos != std::string::npos) 
     {
         std::string completeCommand = clientBuffer.substr(0, pos);
-        if (!completeCommand.empty())
-            commandsToProcess.push_back(completeCommand);
         
-        clientBuffer = clientBuffer.substr(pos + 2);
-        
-        pos = clientBuffer.find("\r\n");
-    }
-    pos = clientBuffer.find("\n");
-    while (pos != std::string::npos && pos > 0 && clientBuffer[pos-1] != '\r') 
-    {
-        std::string completeCommand = clientBuffer.substr(0, pos);
-        if (!completeCommand.empty())
-            commandsToProcess.push_back(completeCommand);
+        // Si le \n est précédé d'un \r, c'est un \r\n incomplet
+        if (pos > 0 && clientBuffer[pos-1] == '\r')
+            completeCommand = clientBuffer.substr(0, pos-1);
+            
+        commandsToProcess.push_back(completeCommand); // Même si vide
         clientBuffer = clientBuffer.substr(pos + 1);
-        pos = clientBuffer.find("\n");
+        pos = clientBuffer.find('\n');
+    }
+    
+    // Si le client a envoyé des données sans terminateur de ligne et qu'il attend une réponse
+    // (utile pour la première utilisation de netcat après compilation)
+    if (commandsToProcess.empty() && !clientBuffer.empty() && 
+        (bytes_received < (ssize_t)(sizeof(buffer) - 1)))
+    {
+        // Si le buffer ne se termine pas par un retour à la ligne mais qu'on a reçu moins que la taille max,
+        // cela peut indiquer une commande complète sans terminateur de ligne
+        commandsToProcess.push_back(clientBuffer);
+        clientBuffer.clear();
     }
     
     if (!commandsToProcess.empty())
     {
-        handleCommands(client, commandsToProcess);
+        try {
+            handleCommands(client, commandsToProcess);
+        } catch (const std::exception& e) {
+            std::cerr << "Exception in handleCommands: " << e.what() << std::endl;
+        }
+        
+        // Vérifie si le client existe toujours après le traitement des commandes
         if (_clients.find(_fds[i].fd) == _clients.end())
             return;
     }

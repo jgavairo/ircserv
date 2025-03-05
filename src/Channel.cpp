@@ -92,7 +92,6 @@ void Channel::removeClient(Client* client)
     }
 }
 
-// Implémentation des méthodes de gestion des modes
 void Channel::setInviteOnly(bool inviteOnly, Client* client, Channel* channel)
 {
     if (inviteOnly && _allModes.find('i') != std::string::npos)
@@ -105,11 +104,11 @@ void Channel::setInviteOnly(bool inviteOnly, Client* client, Channel* channel)
     if (inviteOnly)
     {
         channel->broadcast(NOTICE_INVITE_ONLY_SET(client->getNickname(), channel->getName()), NULL);
-        std::cout << "[+i] Channel " << _name << " est que sur invitation." << std::endl;
+        std::cout << "[+i] Channel " << _name << " is no invite-only." << std::endl;
         _allModes += "i";
     }
     else{
-        std::cout << "[-i] Channel " << _name << " n'est plus sur invitation." << std::endl;
+        std::cout << "[-i] Channel " << _name << " is no longer invite-only." << std::endl;
         size_t pos = _allModes.find("i");
         if (pos != std::string::npos)
         {
