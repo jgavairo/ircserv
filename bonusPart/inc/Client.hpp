@@ -23,6 +23,7 @@ class Client
         std::string _realname;
         std::string _password;
         std::string _buffer;
+        std::string _welcomeMessage;
         bool        _authenticated;
     public:
         Client(int fd);
@@ -34,6 +35,7 @@ class Client
         const std::string& getHostname() const;
         const std::string& getRealname() const;
         const std::string& getPassword() const;
+        const std::string& getWelcomeMessge() const;
         int getFd() const;
         ClientState getState() const;
         std::string& getBuffer();
@@ -43,6 +45,7 @@ class Client
         void setPassword(const std::string& password);
         void setRealname(const std::string& nickname);
         void setState(ClientState state);
+        void setWelcomeMessage(const std::string& message);
         void appendToBuffer(const std::string& data);
         
         void setAuth(bool state);
@@ -50,6 +53,7 @@ class Client
         void reply(const std::string& reply);
         void userReply(const std::string& message);
         void write(const std::string& message);
+        void clearWelcomeMessage();
         
         bool isAuthenticated();
         bool isOperator();

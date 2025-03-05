@@ -121,20 +121,15 @@ int Server::addNewClient()
         return -1;
     }
     fcntl(client_socket, F_SETFL, O_NONBLOCK);
-    std::string initialResponse = ":irc.example.com NOTICE * :Welcome to My IRC Server!\r\n";
-    ssize_t bytes_sent = send(client_socket, initialResponse.c_str(), initialResponse.size(), 0);
-    if (bytes_sent < 0 && (errno == EWOULDBLOCK || errno == EAGAIN)) 
-    {
-        pollfd client_poll_fd = {client_socket, POLLIN | POLLOUT, 0};
-        _fds.push_back(client_poll_fd);
-    }
-    else 
-    {
-        pollfd client_poll_fd = {client_socket, POLLIN, 0};
-        _fds.push_back(client_poll_fd);
-    }
+
     Client* new_client= new Client(client_socket);
     _clients[client_socket] = new_client;
+    
+    std::string initialResponse = ":irc.example.com NOTICE * :Welcome to My IRC Server!\r\n";
+    new_client->setWelcomeMessage(initialResponse);
+
+    pollfd client_poll_fd = {client_socket, POLLIN | POLLOUT, 0};
+    _fds.push_back(client_poll_fd);
 
     std::cout << "Client fd " << _clients[client_socket]->getFd() << " has been connected." << std::endl;
 
@@ -267,6 +262,20 @@ void Server::run()
             }
             else if (_fds[i].revents & POLLIN)
                 receiveNewSignal(i);
+            else if (_fds[i].revents & POLLOUT)
+            {
+                if (_clients.find(_fds[i].fd) != _clients.end())
+                {
+                    Client* client = _clients[_fds[i].fd];
+                    std::string welcomeMessage = client->getWelcomeMessge();
+                    if (!welcomeMessage.empty())
+                    {
+                        send(_fds[i].fd, welcomeMessage.c_str(), welcomeMessage.size(), 0);
+                        client->clearWelcomeMessage();
+                        _fds[i].events = POLLIN;
+                    }
+                }
+            }
         }
     }
     std::cout << "Closing all connections..." << std::endl;

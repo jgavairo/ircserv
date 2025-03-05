@@ -25,12 +25,14 @@ Client::~Client()
     _channels.clear();
 }
 
+
 int Client::getFd() const { return _fd; }
 const std::string& Client::getHostname() const { return _hostname; }
 const std::string& Client::getRealname() const { return _realname; }
 const std::string& Client::getPassword() const { return _password; }
 const std::string& Client::getUsername() const { return _username; }
 const std::string& Client::getNickname() const { return _nickname; }
+const std::string& Client::getWelcomeMessge() const { return _welcomeMessage; }
 ClientState Client::getState() const { return _state; }
 std::string& Client::getBuffer() { return _buffer; }
 
@@ -40,9 +42,11 @@ void Client::setPassword(const std::string& password) { _password = password; }
 void Client::setRealname(const std::string& realname) { _realname = realname; }
 void Client::setState(ClientState state) { _state = state; }
 void Client::appendToBuffer(const std::string& data) { _buffer += data; }
+void Client::setWelcomeMessage(const std::string& message) { _welcomeMessage = message; }
 
 bool Client::isAuthenticated() { return _authenticated; }
 void Client::clearBuffer() { _buffer.clear(); }
+void Client::clearWelcomeMessage() {_welcomeMessage.clear();}
 
 void Client::reply(const std::string& reply)
 {

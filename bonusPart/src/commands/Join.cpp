@@ -52,55 +52,56 @@ void Join::execute(Client* client, std::string arguments)
             channels[channelName] = new Channel(channelName);
             channels[channelName]->setInitialOperator(client);
 
-        if (channels[channelName]->getUserLimit() > 0 && (channels[channelName]->_clients.size()) >= channels[channelName]->getUserLimit())
-        {
-            client->reply(ERR_CHANNELISFULL(client->getNickname(), channelName));
-            return;
-        }
-
-        if (channels[channelName]->isInviteOnly() && !channels[channelName]->isInvited(client))
-        {
-            client->reply(ERR_INVITEONLYCHAN(client->getNickname(), channelName));
-            return;
-        }
-
-        if (channels[channelName]->isInvited(client) || channels[channelName]->getPassword().empty())
-            channels[channelName]->addClient(client);
-        else if (!channels[channelName]->getPassword().empty())
-        {
-            if (keys.empty() || (indexKey < keys.size() && keys[indexKey] != channels[channelName]->getPassword()))
+            if (channels[channelName]->getUserLimit() > 0 && (channels[channelName]->_clients.size()) >= channels[channelName]->getUserLimit())
             {
-                client->reply(ERR_BADCHANNELKEY(client->getNickname(), channelName));
-                indexKey++;
-                continue;
+                client->reply(ERR_CHANNELISFULL(client->getNickname(), channelName));
+                return;
             }
-            else
+
+            if (channels[channelName]->isInviteOnly() && !channels[channelName]->isInvited(client))
+            {
+                client->reply(ERR_INVITEONLYCHAN(client->getNickname(), channelName));
+                return;
+            }
+
+            if (channels[channelName]->isInvited(client) || channels[channelName]->getPassword().empty())
                 channels[channelName]->addClient(client);
-            indexKey++;
-        }
-        std::string namesList;
-        const std::vector<std::string>& clients = channels[channelName]->getNamesClients();
-        for (size_t i = 0; i < clients.size(); ++i) 
-        {
-            if (!namesList.empty()) 
+            else if (!channels[channelName]->getPassword().empty())
             {
-                namesList += " ";
+                if (keys.empty() || (indexKey < keys.size() && keys[indexKey] != channels[channelName]->getPassword()))
+                {
+                    client->reply(ERR_BADCHANNELKEY(client->getNickname(), channelName));
+                    indexKey++;
+                    continue;
+                }
+                else
+                    channels[channelName]->addClient(client);
+                indexKey++;
             }
-            if (channels[channelName]->isOperatorByName(clients[i]))
-                namesList += "@" + clients[i];
+            std::string namesList;
+            const std::vector<std::string>& clients = channels[channelName]->getNamesClients();
+            for (size_t i = 0; i < clients.size(); ++i) 
+            {
+                if (!namesList.empty()) 
+                {
+                    namesList += " ";
+                }
+                if (channels[channelName]->isOperatorByName(clients[i]))
+                    namesList += "@" + clients[i];
+                else
+                    namesList += clients[i];
+            }
+
+            client->write(RPL_JOIN(client->getPrefix(), channelName));
+            channels[channelName]->broadcast(RPL_JOIN(client->getPrefix(), channelName), client);
+
+            client->reply(RPL_NAMREPLY(client->getNickname(), channelName, namesList));
+            client->reply(RPL_ENDOFNAMES(client->getNickname(), channelName));
+            if (!channels[channelName]->getTopic().empty())
+                client->reply(RPL_TOPIC(client->getNickname(), channelName, channels[channelName]->getTopic()));
             else
-                namesList += clients[i];
+                client->reply(RPL_NOTOPIC(client->getNickname(), channelName));
+            std::cout << "Client " << client->getFd() << " joined channel: " << channelName << std::endl;
         }
-
-        client->write(RPL_JOIN(client->getPrefix(), channelName));
-        channels[channelName]->broadcast(RPL_JOIN(client->getPrefix(), channelName), client);
-
-        client->reply(RPL_NAMREPLY(client->getNickname(), channelName, namesList));
-        client->reply(RPL_ENDOFNAMES(client->getNickname(), channelName));
-        if (!channels[channelName]->getTopic().empty())
-            client->reply(RPL_TOPIC(client->getNickname(), channelName, channels[channelName]->getTopic()));
-        else
-            client->reply(RPL_NOTOPIC(client->getNickname(), channelName));
-        std::cout << "Client " << client->getFd() << " joined channel: " << channelName << std::endl;
     }
 }

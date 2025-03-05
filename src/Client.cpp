@@ -30,6 +30,7 @@ const std::string& Client::getHostname() const { return _hostname; }
 const std::string& Client::getRealname() const { return _realname; }
 const std::string& Client::getPassword() const { return _password; }
 const std::string& Client::getUsername() const { return _username; }
+const std::string& Client::getWelcomeMessge() const { return _welcomeMessage; }
 const std::string& Client::getNickname() const { return _nickname; }
 ClientState Client::getState() const { return _state; }
 std::string& Client::getBuffer() { return _buffer; }
@@ -38,11 +39,14 @@ void Client::setNickname(const std::string& nickname) { _nickname = nickname; }
 void Client::setUsername(const std::string& username) { _username = username; }
 void Client::setPassword(const std::string& password) { _password = password; }
 void Client::setRealname(const std::string& realname) { _realname = realname; }
+void Client::setWelcomeMessage(const std::string& message) { _welcomeMessage = message; }
 void Client::setState(ClientState state) { _state = state; }
 void Client::appendToBuffer(const std::string& data) { _buffer += data; }
 
 bool Client::isAuthenticated() { return _authenticated; }
 void Client::clearBuffer() { _buffer.clear(); }
+
+void Client::clearWelcomeMessage() {_welcomeMessage.clear();}
 
 void Client::reply(const std::string& reply)
 {
