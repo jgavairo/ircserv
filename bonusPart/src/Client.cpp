@@ -9,7 +9,6 @@ Client::~Client()
     if (_fd >= 0)
         close(_fd);
     
-    // Copier les channels dans un vecteur temporaire
     std::vector<Channel*> channels_to_remove;
     for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it)
     {
@@ -17,7 +16,6 @@ Client::~Client()
             channels_to_remove.push_back(it->second);
     }
     
-    // Supprimer le client de chaque channel
     for (size_t i = 0; i < channels_to_remove.size(); ++i)
     {
         if (channels_to_remove[i])
@@ -27,7 +25,6 @@ Client::~Client()
     _channels.clear();
 }
 
-//getters
 int Client::getFd() const { return _fd; }
 const std::string& Client::getHostname() const { return _hostname; }
 const std::string& Client::getRealname() const { return _realname; }
@@ -37,7 +34,6 @@ const std::string& Client::getNickname() const { return _nickname; }
 ClientState Client::getState() const { return _state; }
 std::string& Client::getBuffer() { return _buffer; }
 
-//setters
 void Client::setNickname(const std::string& nickname) { _nickname = nickname; }
 void Client::setUsername(const std::string& username) { _username = username; }
 void Client::setPassword(const std::string& password) { _password = password; }

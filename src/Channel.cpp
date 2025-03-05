@@ -5,14 +5,12 @@ Channel::Channel(const std::string& name) :_name(name), _topic(""), _empty(true)
 
 Channel::~Channel()
 {
-    // Notifier tous les clients que le channel est détruit
     for (std::map<std::string, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it)
     {
         if (it->second)
         it->second->_channels.erase(_name);
     }
     
-    // Vider les collections
     _clients.clear();
     _operators.clear();
     _invitedClients.clear();
@@ -239,16 +237,14 @@ std::string Channel::getAllModes() const
     return _allModes;
 }
 
-// Nouvelle méthode pour définir un opérateur lors de la création du canal
 void Channel::setInitialOperator(Client* client)
 {
     _operators.insert(client->getNickname());
 }
 
-// Nouvelle méthode pour vérifier si un client est invité
 bool Channel::isInvited(Client* client) const
 {
-    return _invitedClients.find(client->getNickname()) != _invitedClients.end();//Verifie si le client est dans la liste des clients invités
+    return _invitedClients.find(client->getNickname()) != _invitedClients.end();
 }
 
 void Channel::inviteClient(const std::string& nickname)

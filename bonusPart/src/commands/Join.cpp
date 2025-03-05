@@ -50,8 +50,7 @@ void Join::execute(Client* client, std::string arguments)
         if (channels.find(channelName) == channels.end())
         {
             channels[channelName] = new Channel(channelName);
-            channels[channelName]->setInitialOperator(client); // Définir le créateur du canal comme opérateur
-        }
+            channels[channelName]->setInitialOperator(client);
 
         if (channels[channelName]->getUserLimit() > 0 && (channels[channelName]->_clients.size()) >= channels[channelName]->getUserLimit())
         {

@@ -125,7 +125,7 @@ int Server::addNewClient()
     ssize_t bytes_sent = send(client_socket, initialResponse.c_str(), initialResponse.size(), 0);
     if (bytes_sent < 0 && (errno == EWOULDBLOCK || errno == EAGAIN)) 
     {
-        pollfd client_poll_fd = {client_socket, POLLIN | POLLOUT, 0};  // Ajout de POLLOUT
+        pollfd client_poll_fd = {client_socket, POLLIN | POLLOUT, 0};
         _fds.push_back(client_poll_fd);
     }
     else 
