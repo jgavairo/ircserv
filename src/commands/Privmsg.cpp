@@ -21,6 +21,13 @@ void Privmsg::execute(Client* client, std::string arguments)
 
     while (true)
     {
+        size_t pos = arguments.find(":");
+        if (pos == std::string::npos)
+        {
+            client->reply(ERR_NOTEXTTOSEND(client->getNickname()));
+            return ;
+        }
+
         if (arguments.empty())
         {
             client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "PRIVMSG"));
@@ -32,7 +39,7 @@ void Privmsg::execute(Client* client, std::string arguments)
         {
             if (newArguments[0] == '#')
                 channelsTargets.push_back(newArguments);
-            else    
+            else
                 clientsTargets.push_back(newArguments);
             iss >> newArguments;
         }
