@@ -116,8 +116,7 @@ int Server::addNewClient()
     int client_socket = accept(_fd, (sockaddr*)&client_adress, &client_len);
     if (client_socket < 0)
     {
-        if (errno != EWOULDBLOCK && errno != EAGAIN)
-            std::cerr << "Error accept() client connexion failed." << std::endl;
+        std::cerr << "Error accept() client connexion failed." << std::endl;
         return -1;
     }
     fcntl(client_socket, F_SETFL, O_NONBLOCK);
@@ -138,18 +137,69 @@ int Server::addNewClient()
 
 void Server::receiveNewSignal(size_t& i)
 {
-    char buffer[1024];
-    ssize_t bytes_received = recv(_fds[i].fd, buffer, sizeof(buffer) - 1, 0);
-    int saved_errno = errno;
+    if (!(_fds[i].revents & POLLIN))
+        return;
 
-    if (bytes_received <= 0)
+    char buffer[512];
+    ssize_t bytes_received = recv(_fds[i].fd, buffer, sizeof(buffer) - 2, 0);
+
+    if (bytes_received > 0)
     {
-        if (bytes_received == 0)
-            std::cout << "client has disconnected. fd: " << _fds[i].fd << std::endl;
-        else if (saved_errno == EWOULDBLOCK || saved_errno == EAGAIN)
+            buffer[bytes_received] = '\0';
+        std::string input(buffer);
+        
+        if (_clients.find(_fds[i].fd) == _clients.end())
             return;
-        else
-            std::cout << "Error: impossible to reading from client, " << strerror(saved_errno) << std::endl;
+        
+        Client* client = _clients[_fds[i].fd];
+        
+        client->appendToBuffer(input);
+
+        std::string& clientBuffer = client->getBuffer();
+        
+        size_t pos = clientBuffer.find("\r\n");
+        std::vector<std::string> commandsToProcess;
+        
+        while (pos != std::string::npos) 
+        {
+            std::string completeCommand = clientBuffer.substr(0, pos);
+            if (!completeCommand.empty())
+                commandsToProcess.push_back(completeCommand);
+            
+            clientBuffer = clientBuffer.substr(pos + 2);
+            
+            pos = clientBuffer.find("\r\n");
+        }
+        pos = clientBuffer.find("\n");
+        while (pos != std::string::npos) 
+        {
+            if (pos == 0 || clientBuffer[pos - 1] != '\r')
+            {
+                std::string completeCommand = clientBuffer.substr(0, pos);
+                if (!completeCommand.empty())
+                    commandsToProcess.push_back(completeCommand);
+            }
+            clientBuffer = clientBuffer.substr(pos + 1);
+            pos = clientBuffer.find("\n");
+        }
+        
+        if (!commandsToProcess.empty())
+        {
+            handleCommands(client, commandsToProcess);
+            if (_clients.find(_fds[i].fd) == _clients.end())
+                return;
+        }
+        
+        if (clientBuffer.size() > 510)
+        {
+            std::cout << "Warning: Client buffer overflow, truncating. fd: " << _fds[i].fd << std::endl;
+            clientBuffer = clientBuffer.substr(0, 510);
+        }
+    }
+    else if (bytes_received <= 0)
+    {
+
+        std::cout << "client has disconnected. fd: " << _fds[i].fd << std::endl;
 
         close(_fds[i].fd);
         if (_clients.find(_fds[i].fd) != _clients.end()) 
@@ -160,56 +210,6 @@ void Server::receiveNewSignal(size_t& i)
         _fds.erase(_fds.begin() + i);
         i--;
         return;
-    }
-    buffer[bytes_received] = '\0';
-    std::string input(buffer);
-    
-    if (_clients.find(_fds[i].fd) == _clients.end())
-        return;
-    
-    Client* client = _clients[_fds[i].fd];
-    
-    client->appendToBuffer(input);
-
-    std::string& clientBuffer = client->getBuffer();
-    
-    size_t pos = clientBuffer.find("\r\n");
-    std::vector<std::string> commandsToProcess;
-    
-    while (pos != std::string::npos) 
-    {
-        std::string completeCommand = clientBuffer.substr(0, pos);
-        if (!completeCommand.empty())
-            commandsToProcess.push_back(completeCommand);
-        
-        clientBuffer = clientBuffer.substr(pos + 2);
-        
-        pos = clientBuffer.find("\r\n");
-    }
-    pos = clientBuffer.find("\n");
-    while (pos != std::string::npos) 
-    {
-        if (pos == 0 || clientBuffer[pos - 1] != '\r')
-        {
-            std::string completeCommand = clientBuffer.substr(0, pos);
-            if (!completeCommand.empty())
-                commandsToProcess.push_back(completeCommand);
-        }
-        clientBuffer = clientBuffer.substr(pos + 1);
-        pos = clientBuffer.find("\n");
-    }
-    
-    if (!commandsToProcess.empty())
-    {
-        handleCommands(client, commandsToProcess);
-        if (_clients.find(_fds[i].fd) == _clients.end())
-            return;
-    }
-    
-    if (clientBuffer.size() > 4096)
-    {
-        std::cout << "Warning: Client buffer overflow, truncating. fd: " << _fds[i].fd << std::endl;
-        clientBuffer = clientBuffer.substr(0, 4096);
     }
 }
 
