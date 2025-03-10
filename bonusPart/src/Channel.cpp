@@ -91,6 +91,11 @@ void Channel::removeClient(Client* client)
         {
             removeClient(_clients["ircbot"]);
         }
+        else
+        {
+            if (isOperator(client))
+                removeOperator(client->getNickname());
+        }
     }
 }
 

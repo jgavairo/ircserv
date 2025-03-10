@@ -87,6 +87,11 @@ void Channel::removeClient(Client* client)
             Server* server = Server::getInstance();
             server->removeEmptyChannel(_name);
         }
+        else
+        {
+            if (isOperator(client))
+                removeOperator(client->getNickname());
+        }
     }
 }
 
